@@ -3,10 +3,10 @@ from PySide6.QtCore import Qt, QRect
 from PySide6.QtGui import QPainter, QColor, QFontMetrics, QFont, QTextCursor
 from qfluentwidgets import (
     Action, CommandBar, PrimaryPushButton,
-    FluentIcon as FIF, PlainTextEdit, setTheme, Theme, ScrollArea, FluentStyleSheet
+    FluentIcon as FIF, PlainTextEdit, setTheme, Theme, ScrollArea, FluentStyleSheet, TransparentPushButton, RoundMenu, PrimaryDropDownPushButton
 )
 from utils.editor.text_edit import *
-from utils.editor.file_mgr import open_markdown_file, save_markdown_file
+from utils.editor.file_mgr import *
 from PySide6.QtWidgets import QTextBrowser
 from utils.editor.md_renderer import convert_markdown
 
@@ -73,68 +73,76 @@ class MarkdownEditorPage(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setObjectName("MarkdownEditor")
-        self.right_scroll = None  # 右侧滚动面板
+        self.right_scroll = None
         self.initUI()
         self.initConnections()
         self.editor.textChanged.connect(self.update_preview)
+        self.current_file_path = None  # 新增文件路径跟踪
+        self.current_file = None  # 新增文件路径跟踪
 
     def initUI(self):
         self.layout = QVBoxLayout(self)
 
-        # 单行工具栏布局
+        # 顶部工具栏（保留图标按钮）
         self.toolbar = CommandBar(self)
-
-        # 主要操作按钮
-        self.open_btn = Action(FIF.FOLDER, "打开")
-        self.save_btn = Action(FIF.SAVE, "保存", objectName="saveAction")
+        self.open_btn = PrimaryPushButton(FIF.FOLDER, "打开")
         self.undo_btn = Action(FIF.LEFT_ARROW, "撤销")
         self.redo_btn = Action(FIF.RIGHT_ARROW, "重做")
-        self.bold_btn = Action(FIF.CODE, "加粗")
-        self.italic_btn = Action(FIF.CODE, "斜体")
-        self.highlight_btn = Action(FIF.HIGHTLIGHT, "高亮")
         self.show_frame_btn = Action(FIF.VIEW, "显示面板")
+        self.save_btn = PrimaryDropDownPushButton(FIF.SAVE, "保存")
+        # 创建带有下拉菜单的保存按钮
+        self.save_menu = RoundMenu(parent=self.save_btn)
+        self.save_as_action = Action(FIF.SAVE_AS, "另存为")
+        self.save_copy_action = Action(FIF.SAVE_COPY, " 保存并复制")
+        self.save_menu.addAction(self.save_as_action)
+        self.save_menu.addAction(self.save_copy_action)
 
-        # 强调按钮（使用Primary样式）
-        self.toolbar.addAction(self.open_btn)
-        self.toolbar.addAction(self.save_btn)
+        self.save_btn.setMenu(self.save_menu)  # 将下拉菜单设置到按钮上
+
+        self.toolbar.addWidget(self.save_btn)  # 添加主按钮控件
+        self.toolbar.addWidget(self.open_btn)
         self.toolbar.addSeparator()
         self.toolbar.addActions([self.undo_btn, self.redo_btn])
         self.toolbar.addSeparator()
-        self.toolbar.addAction(self.bold_btn)
-        self.toolbar.addAction(self.italic_btn)
-        self.toolbar.addAction(self.highlight_btn)
         self.toolbar.addAction(self.show_frame_btn)
 
-        # 占位按钮（使用不同图标）
-        self.toolbar.addSeparator()
-        self.toolbar.addAction(Action(FIF.ZOOM, "搜索"))
-        self.toolbar.addAction(Action(FIF.FONT, "格式"))
-        self.toolbar.addAction(Action(FIF.SHARE, "分享"))
+        # 第二排普通文字按钮
+        self.text_format_toolbar = QHBoxLayout()
+        self.bold_btn = TransparentPushButton("加粗")
+        self.highlight_btn = TransparentPushButton("高亮")
+        self.italic_btn = TransparentPushButton("斜体")
+
+        self.text_format_toolbar.addWidget(self.bold_btn)
+        self.text_format_toolbar.addWidget(self.italic_btn)
+        self.text_format_toolbar.addWidget(self.highlight_btn)
+        self.text_format_toolbar.addStretch(1)
 
         # 编辑器区域
-        self.editor_container = QSplitter(Qt.Horizontal)  # 使用 QSplitter 实现可拖动分割
-        self.editor_layout = QHBoxLayout(self.editor_container)
-        self.editor_layout.setContentsMargins(0, 0, 0, 0)
-
-        # 使用自定义编辑器
+        self.editor_container = QSplitter(Qt.Horizontal)
         self.editor = LineNumberEditor()
-        self.editor_layout.addWidget(self.editor)
+        self.editor_container.addWidget(self.editor)
 
+        # 组合布局
         self.layout.addWidget(self.toolbar)
+        self.layout.addLayout(self.text_format_toolbar)
         self.layout.addWidget(self.editor_container)
 
-        # 设置主题
         setTheme(Theme.LIGHT)
 
     def initConnections(self):
-        self.open_btn.triggered.connect(lambda: open_markdown_file(self, self.editor))
-        self.save_btn.triggered.connect(lambda: save_markdown_file(self, self.editor))
+        self.open_btn.clicked.connect(lambda: open_markdown_file(self, self.editor, self))
         self.undo_btn.triggered.connect(self.editor.undo)
         self.redo_btn.triggered.connect(self.editor.redo)
-        self.bold_btn.triggered.connect(lambda: wrap_bold(self.editor))
-        self.italic_btn.triggered.connect(lambda: wrap_italic(self.editor))
-        self.highlight_btn.triggered.connect(lambda: wrap_highlight(self.editor))
+        self.bold_btn.clicked.connect(lambda: wrap_bold(self.editor))
+        self.italic_btn.clicked.connect(lambda: wrap_italic(self.editor))
+        self.highlight_btn.clicked.connect(lambda: wrap_highlight(self.editor))
         self.show_frame_btn.triggered.connect(self.toggle_right_frame)
+        self.save_btn.clicked.connect(lambda: save_markdown_file(self, self.editor, self))
+        self.save_as_action.triggered.connect(lambda: save_as_markdown_file(self, self.editor))
+        self.save_copy_action.triggered.connect(lambda: save_copy_markdown_file(self, self.editor, self))
+
+    # 其他方法保持不变...
+
 
     def toggle_right_frame(self):
         """切换右侧滚动面板的显示状态"""
