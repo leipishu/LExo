@@ -13,3 +13,12 @@ def wrap_selection_with_symbol(editor, symbol):
 
 def wrap_bold(editor):
     wrap_selection_with_symbol(editor, "**")
+
+def wrap_italic(editor):
+    wrap_selection_with_symbol(editor, "*")
+
+def wrap_highlight(editor):
+    wrap_selection_with_symbol(editor, "`")
+
+def wrap_delete(editor):
+    wrap_selection_with_symbol(editor, "~~")

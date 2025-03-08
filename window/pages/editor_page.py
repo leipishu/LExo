@@ -5,7 +5,7 @@ from qfluentwidgets import (
     Action, CommandBar, PrimaryPushButton,
     FluentIcon as FIF, PlainTextEdit, setTheme, Theme, ScrollArea, FluentStyleSheet
 )
-from utils.editor.text_edit import wrap_bold
+from utils.editor.text_edit import *
 from utils.editor.file_mgr import open_markdown_file, save_markdown_file
 from PySide6.QtWidgets import QTextBrowser
 from utils.editor.md_renderer import convert_markdown
@@ -90,6 +90,9 @@ class MarkdownEditorPage(QWidget):
         self.undo_btn = Action(FIF.LEFT_ARROW, "撤销")
         self.redo_btn = Action(FIF.RIGHT_ARROW, "重做")
         self.bold_btn = Action(FIF.CODE, "加粗")
+        self.italic_btn = Action(FIF.CODE, "斜体")
+        self.highlight_btn = Action(FIF.HIGHTLIGHT, "高亮")
+        self.delete_btn = Action(FIF.BROOM, "删除")
         self.show_frame_btn = Action(FIF.VIEW, "显示面板")
 
         # 强调按钮（使用Primary样式）
@@ -99,6 +102,9 @@ class MarkdownEditorPage(QWidget):
         self.toolbar.addActions([self.undo_btn, self.redo_btn])
         self.toolbar.addSeparator()
         self.toolbar.addAction(self.bold_btn)
+        self.toolbar.addAction(self.italic_btn)
+        self.toolbar.addAction(self.highlight_btn)
+        self.toolbar.addAction(self.delete_btn)
         self.toolbar.addAction(self.show_frame_btn)
 
         # 占位按钮（使用不同图标）
@@ -128,6 +134,9 @@ class MarkdownEditorPage(QWidget):
         self.undo_btn.triggered.connect(self.editor.undo)
         self.redo_btn.triggered.connect(self.editor.redo)
         self.bold_btn.triggered.connect(lambda: wrap_bold(self.editor))
+        self.italic_btn.triggered.connect(lambda: wrap_italic(self.editor))
+        self.highlight_btn.triggered.connect(lambda: wrap_highlight(self.editor))
+        self.delete_btn.triggered.connect(lambda: wrap_delete(self.editor))
         self.show_frame_btn.triggered.connect(self.toggle_right_frame)
 
     def toggle_right_frame(self):
