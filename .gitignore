@@ -128,3 +128,4 @@ dmypy.json
 *.spec
 /dist
 /build
+/releases
