@@ -123,3 +123,8 @@ dmypy.json
 *.iml
 *.ipr
 *.iws
+
+# Pyinstaller
+*.spec
+/dist
+/build
