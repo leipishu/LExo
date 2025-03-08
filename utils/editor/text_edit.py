@@ -19,6 +19,3 @@ def wrap_italic(editor):
 
 def wrap_highlight(editor):
     wrap_selection_with_symbol(editor, "`")
-
-def wrap_delete(editor):
-    wrap_selection_with_symbol(editor, "~~")

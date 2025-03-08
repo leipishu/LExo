@@ -92,7 +92,6 @@ class MarkdownEditorPage(QWidget):
         self.bold_btn = Action(FIF.CODE, "加粗")
         self.italic_btn = Action(FIF.CODE, "斜体")
         self.highlight_btn = Action(FIF.HIGHTLIGHT, "高亮")
-        self.delete_btn = Action(FIF.BROOM, "删除")
         self.show_frame_btn = Action(FIF.VIEW, "显示面板")
 
         # 强调按钮（使用Primary样式）
@@ -104,7 +103,6 @@ class MarkdownEditorPage(QWidget):
         self.toolbar.addAction(self.bold_btn)
         self.toolbar.addAction(self.italic_btn)
         self.toolbar.addAction(self.highlight_btn)
-        self.toolbar.addAction(self.delete_btn)
         self.toolbar.addAction(self.show_frame_btn)
 
         # 占位按钮（使用不同图标）
@@ -136,7 +134,6 @@ class MarkdownEditorPage(QWidget):
         self.bold_btn.triggered.connect(lambda: wrap_bold(self.editor))
         self.italic_btn.triggered.connect(lambda: wrap_italic(self.editor))
         self.highlight_btn.triggered.connect(lambda: wrap_highlight(self.editor))
-        self.delete_btn.triggered.connect(lambda: wrap_delete(self.editor))
         self.show_frame_btn.triggered.connect(self.toggle_right_frame)
 
     def toggle_right_frame(self):
