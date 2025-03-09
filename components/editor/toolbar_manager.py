@@ -36,6 +36,7 @@ class ToolbarManager:
         self.bold_btn = TransparentPushButton("加粗")
         self.highlight_btn = TransparentPushButton("高亮")
         self.italic_btn = TransparentPushButton("斜体")
+        self.underline_btn = TransparentPushButton("下划线")
         return self.text_format_toolbar
 
     def setup_toolbar_layout(self):
@@ -53,4 +54,5 @@ class ToolbarManager:
         self.text_format_toolbar.addWidget(self.bold_btn)
         self.text_format_toolbar.addWidget(self.italic_btn)
         self.text_format_toolbar.addWidget(self.highlight_btn)
+        self.text_format_toolbar.addWidget(self.underline_btn)
         self.text_format_toolbar.addStretch(1)

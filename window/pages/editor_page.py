@@ -50,6 +50,7 @@ class MarkdownEditorPage(QWidget, PreviewPanel, ToolbarManager):
         self.bold_btn.clicked.connect(lambda: wrap_bold(self.editor))
         self.italic_btn.clicked.connect(lambda: wrap_italic(self.editor))
         self.highlight_btn.clicked.connect(lambda: wrap_highlight(self.editor))
+        self.underline_btn.clicked.connect(lambda: wrap_underline(self.editor))
         self.show_frame_btn.triggered.connect(self.toggle_right_frame)
         self.save_btn.clicked.connect(lambda: save_markdown_file(self, self.editor, self))
         self.save_btn_2.triggered.connect(lambda: save_markdown_file(self, self.editor, self))
