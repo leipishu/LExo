@@ -23,6 +23,7 @@ class ToolbarManager:
         self.save_menu = RoundMenu(parent=self.save_btn)
         self.save_as_action = Action(FIF.SAVE_AS, "另存为")
         self.save_copy_action = Action(FIF.SAVE_COPY, "保存并复制")
+        self.save_btn_2 = Action(FIF.SAVE, "保存")
 
         self.image_load_switch = SwitchButton(self)  # 添加开关按钮
         self.image_load_switch.setOffText("关闭图片加载")
@@ -38,7 +39,7 @@ class ToolbarManager:
         return self.text_format_toolbar
 
     def setup_toolbar_layout(self):
-        self.save_menu.addActions([self.save_as_action, self.save_copy_action])
+        self.save_menu.addActions([self.save_btn_2, self.save_as_action, self.save_copy_action])
         self.save_btn.setMenu(self.save_menu)
 
         self.toolbar.addWidget(self.save_btn)

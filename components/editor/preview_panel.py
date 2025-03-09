@@ -6,7 +6,9 @@ class PreviewPanel:
     def __init__(self, parent=None):
         self.parent = parent
         self.right_scroll = None
-        self.preview = None
+        self.preview = None  # 这是实际的预览组件
+        self._saved_scroll_pos = 0
+
     def create_preview_area(self):
         self.right_scroll = ScrollArea()
         self.right_scroll.setObjectName("RightPanel")
@@ -44,6 +46,16 @@ class PreviewPanel:
         self.right_scroll.setWidgetResizable(True)
         return self.right_scroll
 
-    def update_preview_content(self, html_content):
-        """接收外部传入的HTML内容"""
-        self.preview.setHtml(html_content.replace("http://", "https://"))
+    def update_preview_content(self, html):
+        # 保存滚动位置
+        self._saved_scroll_pos = self.preview.verticalScrollBar().value()
+
+        # 设置新内容
+        self.preview.setHtml(html)
+
+        # 恢复滚动位置（需要延迟执行）
+        from PySide6.QtCore import QTimer
+        QTimer.singleShot(0, self._restore_scroll_position)
+
+    def _restore_scroll_position(self):
+        self.preview.verticalScrollBar().setValue(self._saved_scroll_pos)

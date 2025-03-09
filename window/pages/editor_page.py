@@ -52,6 +52,7 @@ class MarkdownEditorPage(QWidget, PreviewPanel, ToolbarManager):
         self.highlight_btn.clicked.connect(lambda: wrap_highlight(self.editor))
         self.show_frame_btn.triggered.connect(self.toggle_right_frame)
         self.save_btn.clicked.connect(lambda: save_markdown_file(self, self.editor, self))
+        self.save_btn_2.triggered.connect(lambda: save_markdown_file(self, self.editor, self))
         self.save_as_action.triggered.connect(lambda: save_as_markdown_file(self, self.editor))
         self.save_copy_action.triggered.connect(lambda: save_copy_markdown_file(self, self.editor, self))
         self.editor.textChanged.connect(self.update_preview)
@@ -138,7 +139,11 @@ class MarkdownEditorPage(QWidget, PreviewPanel, ToolbarManager):
     def _do_update_preview(self):
         text = self.editor.toPlainText()
         html = convert_markdown(text)
-
+        # 获取当前滚动位置
+        if self.right_scroll:
+            scroll = self.right_scroll.verticalScrollBar()
+            old_pos = scroll.value()
+            at_bottom = (scroll.maximum() - scroll.value()) <= 20  # 判断是否在底部
         # 先处理所有图片逻辑
         if self.image_load_switch.isChecked():
             # 处理真实图片加载（需要先清除之前的占位符）
@@ -157,9 +162,16 @@ class MarkdownEditorPage(QWidget, PreviewPanel, ToolbarManager):
                 flags=re.IGNORECASE
             )
 
+
         # 最后统一应用尺寸限制
         html = html.replace('<img src', '<img style="max-width: 600px; height: auto;" src')
         PreviewPanel.update_preview_content(self, html)
+        #恢复滚动位置
+        if self.right_scroll:
+            if at_bottom:  # 如果在底部则保持到底部
+                scroll.setValue(scroll.maximum())
+            else:  # 否则恢复原位置
+                scroll.setValue(old_pos)
 
 
 
