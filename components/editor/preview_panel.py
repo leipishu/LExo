@@ -1,14 +1,19 @@
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QTextBrowser
-from qfluentwidgets import ScrollArea
+from qfluentwidgets import ScrollArea, TextBrowser
+from PySide6.QtCore import Qt
 
 class PreviewPanel:
+    def __init__(self, parent=None):
+        self.parent = parent
+        self.right_scroll = None
+        self.preview = None
     def create_preview_area(self):
         self.right_scroll = ScrollArea()
         self.right_scroll.setObjectName("RightPanel")
-        self.preview = QTextBrowser()
+        self.preview = TextBrowser()
+        self.preview.setAttribute(Qt.WA_DeleteOnClose)  # 允许资源加载
         self.preview.setOpenExternalLinks(True)
         self.preview.setMinimumWidth(200)
-
         # 样式设置
         self.right_scroll.setStyleSheet("""
             QScrollArea {
@@ -29,16 +34,6 @@ class PreviewPanel:
             }
         """)
 
-        self.preview.setStyleSheet("""
-            QTextBrowser {
-                background-color: white;
-                border-radius: 5px;
-                color: black;
-                border: none;
-                padding: 10px;
-            }
-        """)
-
         content = QWidget()
         content_layout = QVBoxLayout(content)
         content_layout.addWidget(self.preview)
@@ -48,3 +43,7 @@ class PreviewPanel:
         self.right_scroll.setWidget(content)
         self.right_scroll.setWidgetResizable(True)
         return self.right_scroll
+
+    def update_preview_content(self, html_content):
+        """接收外部传入的HTML内容"""
+        self.preview.setHtml(html_content.replace("http://", "https://"))

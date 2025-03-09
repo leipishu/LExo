@@ -1,6 +1,6 @@
 from qfluentwidgets import (
     Action, CommandBar, PrimaryPushButton, FluentIcon as FIF,
-    TransparentPushButton, RoundMenu, PrimaryDropDownPushButton
+    TransparentPushButton, RoundMenu, PrimaryDropDownPushButton, SwitchButton
 )
 from PySide6.QtWidgets import QHBoxLayout
 
@@ -24,6 +24,10 @@ class ToolbarManager:
         self.save_as_action = Action(FIF.SAVE_AS, "另存为")
         self.save_copy_action = Action(FIF.SAVE_COPY, "保存并复制")
 
+        self.image_load_switch = SwitchButton(self)  # 添加开关按钮
+        self.image_load_switch.setOffText("关闭图片加载")
+        self.image_load_switch.setOnText("开启图片加载")
+
         return self.toolbar
 
     def create_format_toolbar(self):
@@ -43,6 +47,7 @@ class ToolbarManager:
         self.toolbar.addActions([self.undo_btn, self.redo_btn])
         self.toolbar.addSeparator()
         self.toolbar.addAction(self.show_frame_btn)
+        self.toolbar.addWidget(self.image_load_switch)
 
         self.text_format_toolbar.addWidget(self.bold_btn)
         self.text_format_toolbar.addWidget(self.italic_btn)
