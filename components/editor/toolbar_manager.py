@@ -1,6 +1,6 @@
 from qfluentwidgets import (
     Action, CommandBar, PrimaryPushButton, FluentIcon as FIF,
-    TransparentPushButton, RoundMenu, PrimaryDropDownPushButton, SwitchButton
+    TransparentPushButton, RoundMenu, PrimaryDropDownPushButton, SwitchButton, SplitPushButton, PushButton
 )
 from PySide6.QtWidgets import QHBoxLayout
 
@@ -33,10 +33,22 @@ class ToolbarManager:
 
     def create_format_toolbar(self):
         self.text_format_toolbar = QHBoxLayout()
-        self.bold_btn = TransparentPushButton("加粗")
-        self.highlight_btn = TransparentPushButton("高亮")
-        self.italic_btn = TransparentPushButton("斜体")
-        self.underline_btn = TransparentPushButton("下划线")
+        self.bold_btn = PushButton("加粗")
+        self.highlight_btn = PushButton("高亮")
+        self.italic_btn = PushButton("斜体")
+        self.underline_btn = PushButton("下划线")
+
+        self.title_btn = SplitPushButton(FIF.FONT, "标题")
+        self.title_menu = RoundMenu(parent=self.title_btn)
+        self.title_btn_h1 = Action(FIF.FONT, "标题1")
+        self.title_btn_h2 = Action(FIF.FONT, "标题2")
+        self.title_btn_h3 = Action(FIF.FONT, "标题3")
+        self.title_btn_h4 = Action(FIF.FONT, "标题4")
+        self.title_btn_h5 = Action(FIF.FONT, "标题5")
+        self.title_btn_h6 = Action(FIF.FONT, "标题6")
+        self.title_menu.addActions([self.title_btn_h1, self.title_btn_h2, self.title_btn_h3, self.title_btn_h4, self.title_btn_h5, self.title_btn_h6])
+        self.title_btn.setFlyout(self.title_menu)
+
         return self.text_format_toolbar
 
     def setup_toolbar_layout(self):
@@ -55,4 +67,5 @@ class ToolbarManager:
         self.text_format_toolbar.addWidget(self.italic_btn)
         self.text_format_toolbar.addWidget(self.highlight_btn)
         self.text_format_toolbar.addWidget(self.underline_btn)
+        self.text_format_toolbar.addWidget(self.title_btn)
         self.text_format_toolbar.addStretch(1)

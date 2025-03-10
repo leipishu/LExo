@@ -22,3 +22,38 @@ def wrap_highlight(editor):
 
 def wrap_underline(editor):
     wrap_selection_with_symbol(editor, "<u>", "</u>")
+
+def _insert_heading(editor, level):
+    cursor = editor.textCursor()
+    mark = '#' * level + ' '
+
+    if cursor.hasSelection():
+        # 处理选区内容
+        selected = cursor.selectedText()
+        cursor.insertText(f"{mark}{selected}")
+    else:
+        # 直接插入标题标记并定位光标
+        cursor.insertText(mark)
+        # 移动光标到标题内容起始位置
+        cursor.movePosition(QTextCursor.Left, QTextCursor.MoveAnchor, len(mark))
+        cursor.movePosition(QTextCursor.Right, QTextCursor.MoveAnchor, len(mark))
+
+    editor.setTextCursor(cursor)
+
+def title_h1(editor):
+    _insert_heading(editor, 1)
+
+def title_h2(editor):
+    _insert_heading(editor, 2)
+
+def title_h3(editor):
+    _insert_heading(editor, 3)
+
+def title_h4(editor):
+    _insert_heading(editor, 4)
+
+def title_h5(editor):
+    _insert_heading(editor, 5)
+
+def title_h6(editor):
+    _insert_heading(editor, 6)
