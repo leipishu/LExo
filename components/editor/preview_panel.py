@@ -20,7 +20,7 @@ class PreviewPanel:
         self.right_scroll.setStyleSheet("""
             QScrollArea {
                 background-color: transparent;
-                border-left: 1px solid #eeeeee;
+                border:none;
                 border-radius: 5px;
             }
             QScrollBar:vertical {

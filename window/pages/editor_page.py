@@ -1,13 +1,13 @@
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QSplitter
-from PySide6.QtCore import Qt,QTimer,QByteArray,QBuffer,QUrl
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QSplitter, QPlainTextEdit, QApplication
+from PySide6.QtCore import Qt, QTimer, QByteArray, QBuffer, QUrl
 from PySide6.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkReply
-from qfluentwidgets import setTheme, Theme
-from utils.editor.md_renderer import convert_markdown
+from qfluentwidgets import setTheme, Theme, ScrollArea, PlainTextEdit, FluentIcon
 import re
 
 from components.editor.line_number import LineNumberEditor
 from components.editor.preview_panel import PreviewPanel
 from components.editor.toolbar_manager import ToolbarManager
+from components.editor.frontmatter_editor import FrontmatterManager
 
 from utils.editor.file_mgr import *
 from utils.editor.text_edit import *
@@ -20,8 +20,12 @@ class MarkdownEditorPage(QWidget, PreviewPanel, ToolbarManager):
         self.right_scroll = None
         self.current_file_path = None
         self.current_file = None
+        self.show_frontmatter = None
+        self.frontmatter_manager = FrontmatterManager()
 
         # 初始化界面
+        self.network_manager = QNetworkAccessManager(self)
+        self.image_cache = {}
         self.setup_theme()
         self.initUI()
         self.initConnections()
@@ -32,16 +36,25 @@ class MarkdownEditorPage(QWidget, PreviewPanel, ToolbarManager):
     def initUI(self):
         self.layout = QVBoxLayout(self)
 
-        # 工具栏
+        # 主编辑区域布局
+        self.main_container = QSplitter(Qt.Vertical)
+        self.main_container.setStyleSheet("QSplitter::handle { background: transparent; border: none; }")
+
+        # 添加原有的编辑和预览区域
+        self.editor_container = QSplitter(Qt.Horizontal)
+        self.editor_container.setStyleSheet("QSplitter::handle { background: transparent; border: none; }")
+        self.editor = LineNumberEditor()
+        self.editor_container.addWidget(self.editor)
+
+        # 创建frontmatter区域（使用manager）
+        frontmatter_scroll = self.frontmatter_manager.create_editor_area(self)
+        self.main_container.addWidget(self.editor_container)
+        self.main_container.addWidget(frontmatter_scroll)
+
         self.layout.addWidget(self.create_toolbar())
         self.layout.addLayout(self.create_format_toolbar())
         self.setup_toolbar_layout()
-
-        # 编辑器区域
-        self.editor_container = QSplitter(Qt.Horizontal)
-        self.editor = LineNumberEditor()
-        self.editor_container.addWidget(self.editor)
-        self.layout.addWidget(self.editor_container)
+        self.layout.addWidget(self.main_container)
 
     def initConnections(self):
         self.open_btn.clicked.connect(lambda: open_markdown_file(self, self.editor, self))
@@ -65,6 +78,10 @@ class MarkdownEditorPage(QWidget, PreviewPanel, ToolbarManager):
         self.save_copy_action.triggered.connect(lambda: save_copy_markdown_file(self, self.editor, self))
         self.editor.textChanged.connect(self.update_preview)
         self.image_load_switch.checkedChanged.connect(lambda: self.update_preview())
+        self.toggle_frontmatter_btn.triggered.connect(self.toggle_frontmatter)
+
+    def toggle_frontmatter(self):
+        self.frontmatter_manager.toggle_visibility()
 
     def async_image_load(self, html):
         """异步加载图片并替换为占位符"""
@@ -113,7 +130,6 @@ class MarkdownEditorPage(QWidget, PreviewPanel, ToolbarManager):
             if self.right_scroll and self.right_scroll.isVisible():
                 self.update_preview()
         reply.deleteLater()
-
 
     def toggle_right_frame(self):
         if not self.right_scroll:
@@ -170,7 +186,6 @@ class MarkdownEditorPage(QWidget, PreviewPanel, ToolbarManager):
                 flags=re.IGNORECASE
             )
 
-
         # 最后统一应用尺寸限制
         html = html.replace('<img src', '<img style="max-width: 600px; height: auto;" src')
         PreviewPanel.update_preview_content(self, html)
@@ -180,6 +195,3 @@ class MarkdownEditorPage(QWidget, PreviewPanel, ToolbarManager):
                 scroll.setValue(scroll.maximum())
             else:  # 否则恢复原位置
                 scroll.setValue(old_pos)
-
-
-

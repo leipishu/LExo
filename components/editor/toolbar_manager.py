@@ -29,6 +29,8 @@ class ToolbarManager:
         self.image_load_switch.setOffText("关闭图片加载")
         self.image_load_switch.setOnText("开启图片加载")
 
+        self.toggle_frontmatter_btn = Action(FIF.CODE, "FrontMatter")
+
         return self.toolbar
 
     def create_format_toolbar(self):
@@ -60,8 +62,10 @@ class ToolbarManager:
         self.toolbar.addSeparator()
         self.toolbar.addActions([self.undo_btn, self.redo_btn])
         self.toolbar.addSeparator()
-        self.toolbar.addAction(self.show_frame_btn)
         self.toolbar.addWidget(self.image_load_switch)
+        self.toolbar.addSeparator()
+        self.toolbar.addAction(self.show_frame_btn)
+        self.toolbar.addAction(self.toggle_frontmatter_btn)
 
         self.text_format_toolbar.addWidget(self.bold_btn)
         self.text_format_toolbar.addWidget(self.italic_btn)
