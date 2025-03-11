@@ -33,7 +33,7 @@ LExo 是一个基于 Python 的桌面应用程序，旨在为 Hexo 博客框架�
 - 添加更多 Hexo 主题的配置支持。
 - 提供配置文件的语法检查和错误提示功能。
 - 优化用户界面，使其更加友好和直观。
-- 提供多语言界面支持，包括但不限于英语、中文和日语。
+- 提供多语言界面支持，包括但不限于英语、中文。
 - 提供详细的用户手册和配置指南。
 
 ## 贡献指南
@@ -43,7 +43,7 @@ LExo 是一个基于 Python 的桌面应用程序，旨在为 Hexo 博客框架�
 - 提供使用反馈和建议。
 
 ## 许可证
-本项目使用 [LGPLv3](https://www.gnu.org/licenses/lgpl-3.0.html) 许可证。详情请参阅项目根目录下的 `LICENSE` 文件。
+本项目使用 [GPLv3](https://www.gnu.org/licenses/gpl-3.0.html) 许可证。详情请参阅项目根目录下的 `LICENSE` 文件。
 
 ## 联系方式
 - **GitHub**: [https://github.com/leipishu/LExo](https://github.com/leipishu/LExo)
