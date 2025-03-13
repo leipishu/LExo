@@ -74,7 +74,7 @@ class MarkdownEditorPage(QWidget, PreviewPanel, ToolbarManager):
         self.show_frame_btn.triggered.connect(self.toggle_right_frame)
         self.save_btn.clicked.connect(lambda: save_markdown_file(self, self.editor, self))
         self.save_btn_2.triggered.connect(lambda: save_markdown_file(self, self.editor, self))
-        self.save_as_action.triggered.connect(lambda: save_as_markdown_file(self, self.editor))
+        self.save_as_action.triggered.connect(lambda: save_as_markdown_file(self, self.editor, self))
         self.save_copy_action.triggered.connect(lambda: save_copy_markdown_file(self, self.editor, self))
         self.editor.textChanged.connect(self.update_preview)
         self.image_load_switch.checkedChanged.connect(lambda: self.update_preview())
