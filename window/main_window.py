@@ -3,6 +3,7 @@ from PySide6.QtGui import QIcon
 from qfluentwidgets import FluentWindow, NavigationItemPosition
 from qfluentwidgets import FluentIcon as FIF
 from window.pages.editor_page import MarkdownEditorPage
+from window.pages.about_page import AboutPage
 
 class MainWindow(FluentWindow):
     def __init__(self):
@@ -10,6 +11,9 @@ class MainWindow(FluentWindow):
 
         # 创建编辑器页面
         self.editor_page = MarkdownEditorPage(self)
+        self.about_page = AboutPage(self)
+        self.editor_page.setObjectName("MD_Editor")
+        self.about_page.setObjectName("About")
 
         # 初始化导航栏
         self.initNavigation()
@@ -27,3 +31,12 @@ class MainWindow(FluentWindow):
             text="Markdown 编辑器",
             position=NavigationItemPosition.TOP
         )
+
+        self.addSubInterface(
+            interface=self.about_page,
+            icon=FIF.INFO,  # 使用内置图标
+            text="关于",
+            position=NavigationItemPosition.BOTTOM
+        )
+
+        self.addSubInterface(self.about_page, FIF.INFO, 'Music library')
