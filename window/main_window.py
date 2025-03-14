@@ -3,7 +3,6 @@ from PySide6.QtGui import QIcon
 from qfluentwidgets import FluentWindow, NavigationItemPosition
 from qfluentwidgets import FluentIcon as FIF
 
-from window.pages.config_page import ConfigPage
 from window.pages.editor_page import MarkdownEditorPage
 from window.pages.about_page import AboutPage
 from window.pages.config_page import ConfigPage
