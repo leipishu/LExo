@@ -2,8 +2,11 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon
 from qfluentwidgets import FluentWindow, NavigationItemPosition
 from qfluentwidgets import FluentIcon as FIF
+
+from window.pages.config_page import ConfigPage
 from window.pages.editor_page import MarkdownEditorPage
 from window.pages.about_page import AboutPage
+from window.pages.config_page import ConfigPage
 
 class MainWindow(FluentWindow):
     def __init__(self):
@@ -12,8 +15,10 @@ class MainWindow(FluentWindow):
         # 创建编辑器页面
         self.editor_page = MarkdownEditorPage(self)
         self.about_page = AboutPage(self)
+        self.config_page = ConfigPage(self)
         self.editor_page.setObjectName("MD_Editor")
         self.about_page.setObjectName("About")
+        self.config_page.setObjectName("Config")
 
         # 初始化导航栏
         self.initNavigation()
@@ -39,4 +44,9 @@ class MainWindow(FluentWindow):
             position=NavigationItemPosition.BOTTOM
         )
 
-        self.addSubInterface(self.about_page, FIF.INFO, 'Music library')
+        self.addSubInterface(
+            interface=self.config_page,
+            icon=FIF.GLOBE,  # 使用内置图标
+            text="Hexo配置",
+            position=NavigationItemPosition.TOP
+        )
