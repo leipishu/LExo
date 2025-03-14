@@ -5,7 +5,7 @@ from qfluentwidgets import FluentIcon as FIF
 
 from window.pages.editor_page import MarkdownEditorPage
 from window.pages.about_page import AboutPage
-from window.pages.config_page import ConfigPage
+from window.pages.hexo_config_page import HexoConfigPage
 
 class MainWindow(FluentWindow):
     def __init__(self):
@@ -14,7 +14,7 @@ class MainWindow(FluentWindow):
         # 创建编辑器页面
         self.editor_page = MarkdownEditorPage(self)
         self.about_page = AboutPage(self)
-        self.config_page = ConfigPage(self)
+        self.config_page = HexoConfigPage(self)
         self.editor_page.setObjectName("MD_Editor")
         self.about_page.setObjectName("About")
         self.config_page.setObjectName("Config")

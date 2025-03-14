@@ -3,7 +3,7 @@ from qfluentwidgets import PlainTextEdit, ScrollArea, PrimaryPushButton, Subtitl
 from pathlib import Path
 import yaml
 
-class ConfigPage(QWidget):
+class HexoConfigPage(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.yaml_data = {}
