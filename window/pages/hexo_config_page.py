@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QFileDialog, QLabel
-from qfluentwidgets import PlainTextEdit, ScrollArea, PrimaryPushButton, SubtitleLabel
+from qfluentwidgets import PlainTextEdit, ScrollArea, PrimaryPushButton, SubtitleLabel, CardWidget, SwitchButton
 from pathlib import Path
 import yaml
 
@@ -21,7 +21,7 @@ class HexoConfigPage(QWidget):
         # 滚动区域
         self.scroll_area = ScrollArea(self)
         self.scroll_widget = QWidget()
-        self.scroll_layout = QVBoxLayout(self.scroll_widget)
+        self.scroll_layout = QVBoxLayout(self.scroll_widget)  # 将 scroll_layout 定义为类的属性
         self.scroll_area.setWidget(self.scroll_widget)
         self.scroll_area.setWidgetResizable(True)
 
@@ -29,9 +29,14 @@ class HexoConfigPage(QWidget):
         self.scroll_widget.setStyleSheet("background: transparent;")
         self.scroll_area.setStyleSheet("background: transparent;")
 
+        # 创建卡片包裹滚动区域
+        scroll_card = CardWidget(self)
+        scroll_card_layout = QVBoxLayout(scroll_card)
+        scroll_card_layout.addWidget(self.scroll_area)
+
         # 组装界面
         self.main_layout.addLayout(self.toolbar)
-        self.main_layout.addWidget(self.scroll_area)
+        self.main_layout.addWidget(scroll_card)
 
         # 信号连接
         self.open_btn.clicked.connect(self.load_yaml)
@@ -58,24 +63,42 @@ class HexoConfigPage(QWidget):
             self.clear_text_edits()
 
             # 动态创建带标题的编辑区
-            for section, content in self.yaml_data.items():
-                # 创建区块容器
-                section_widget = QWidget()
-                section_layout = QVBoxLayout(section_widget)
-                section_layout.setContentsMargins(0, 10, 0, 10)
+            self.add_yaml_section(self.yaml_data, self.scroll_layout)
 
-                # 添加标题
-                title_label = SubtitleLabel(section)
-                title_label.setStyleSheet("padding-bottom: 8px; color: black;")
-                section_layout.addWidget(title_label)
+        except Exception as e:
+            print(f"Error loading YAML: {str(e)}")
 
+    def add_yaml_section(self, data, parent_layout):
+        """递归添加YAML部分"""
+        for section, content in data.items():
+            # 创建卡片作为最外层容器
+            card = CardWidget(self)
+            card_layout = QVBoxLayout(card)
+            card_layout.setContentsMargins(15, 15, 15, 15)
+
+            # 添加标题
+            title_label = SubtitleLabel(section)
+            title_label.setStyleSheet("padding-bottom: 8px; color: black;")
+            card_layout.addWidget(title_label)
+
+            if isinstance(content, dict):
+                # 如果内容是字典，创建新的布局递归添加
+                inner_layout = QVBoxLayout()
+                card_layout.addLayout(inner_layout)
+                self.add_yaml_section(content, inner_layout)
+            elif isinstance(content, bool):
+                # 如果内容是布尔值，使用 SwitchButton
+                switch_button = SwitchButton(self)
+                switch_button.setOnText(str(True))
+                switch_button.setOffText(str(False))
+                switch_button.setChecked(content)
+                card_layout.addWidget(switch_button)
+            else:
                 # 添加文本编辑区
                 text_edit = PlainTextEdit()
                 text_edit.setPlainText(str(content))
                 text_edit.setMinimumHeight(150)
-                section_layout.addWidget(text_edit)
+                card_layout.addWidget(text_edit)
 
-                self.scroll_layout.addWidget(section_widget)
-
-        except Exception as e:
-            print(f"Error loading YAML: {str(e)}")
+            # 将卡片添加到父布局
+            parent_layout.addWidget(card)
