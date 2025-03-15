@@ -46,6 +46,6 @@ class MainWindow(FluentWindow):
         self.addSubInterface(
             interface=self.config_page,
             icon=FIF.GLOBE,  # 使用内置图标
-            text="Hexo配置",
+            text="Hexo 配置",
             position=NavigationItemPosition.TOP
         )
