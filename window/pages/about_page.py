@@ -26,7 +26,7 @@ class AboutPage(QWidget):
         layout.addWidget(title_label, 0, Qt.AlignHCenter)
 
         # 版本信息
-        version_label = SubtitleLabel("版本: indev 1.0.3")
+        version_label = SubtitleLabel("版本: indev 1.1")
         layout.addWidget(version_label, 0, Qt.AlignHCenter)
 
         # 作者信息
