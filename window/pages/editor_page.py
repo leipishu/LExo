@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QSplitter, QPlainTextEdit, QApplication
 from PySide6.QtCore import Qt, QTimer, QByteArray, QBuffer, QUrl
 from PySide6.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkReply
-from qfluentwidgets import setTheme, Theme, ScrollArea, PlainTextEdit, FluentIcon
+from qfluentwidgets import setTheme, Theme, ScrollArea, PlainTextEdit, FluentIcon, CardWidget
 import re
 
 from components.editor.line_number import LineNumberEditor
@@ -51,9 +51,15 @@ class MarkdownEditorPage(QWidget, PreviewPanel, ToolbarManager):
         self.main_container.addWidget(self.editor_container)
         self.main_container.addWidget(frontmatter_scroll)
 
-        self.layout.addWidget(self.create_toolbar())
-        self.layout.addLayout(self.create_format_toolbar())
+        # 将工具栏添加到CardWidget中
+        toolbar_card = CardWidget(self)
+        toolbar_layout = QVBoxLayout(toolbar_card)
+        toolbar_layout.addWidget(self.create_toolbar())
+        toolbar_layout.addLayout(self.create_format_toolbar())
         self.setup_toolbar_layout()
+
+        # 将CardWidget添加到主布局中
+        self.layout.addWidget(toolbar_card)
         self.layout.addWidget(self.main_container)
 
     def initConnections(self):
