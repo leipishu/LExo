@@ -1,5 +1,3 @@
-# window/pages/hexo_config_page.py
-
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QFileDialog
 from qfluentwidgets import CardWidget
@@ -62,13 +60,11 @@ class HexoConfigPage(QWidget):
         self.file_path = path  # 记录文件路径
         self.yaml_data = load_yaml(path)
         if self.yaml_data is None:
-            self.is_file_loaded = False
             return
 
         self.clear_text_edits()
         self.no_file_label.setVisible(False)  # 隐藏提示标签
         self.save_btn.setEnabled(True)  # 启用保存按钮
-        self.is_file_loaded = True
 
         # 动态创建带标题的编辑区
         add_yaml_section(self.yaml_data, self.scroll_layout, self.display_data)
@@ -80,14 +76,13 @@ class HexoConfigPage(QWidget):
     def clear_search(self):
         """清空搜索"""
         self.search_edit.clear()  # 清空搜索框
-        self.clear_text_edits()  # 清空现有内容
-
-        # 如果文件已加载，则不显示提示标签
-        if self.is_file_loaded:
-            self.no_file_label.setVisible(False)
-        else:
-            self.no_file_label.setVisible(True)
-
+        # 清空现有内容并重新加载原始的 YAML 数据
+        while self.scroll_layout.count():
+            item = self.scroll_layout.takeAt(0)
+            widget = item.widget()
+            if widget:
+                widget.deleteLater()
+        self.no_file_label.setVisible(False)  # 隐藏提示标签
         add_yaml_section(self.yaml_data, self.scroll_layout, self.display_data)  # 重新加载原始的 YAML 数据
 
     def save_yaml(self):
