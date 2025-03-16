@@ -1,7 +1,7 @@
 # components/hx_config/toolbar_builder.py
 
 from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout, QFileDialog, QLabel
-from qfluentwidgets import PrimaryPushButton, SearchLineEdit, CardWidget
+from qfluentwidgets import PrimaryPushButton, SearchLineEdit, CardWidget, PushButton
 from qfluentwidgets import FluentIcon as FIF
 
 def build_toolbar(parent):
@@ -18,8 +18,10 @@ def build_toolbar(parent):
 
     toolbar = QHBoxLayout()
     open_btn = PrimaryPushButton(FIF.FOLDER, "打开", parent)
+    add_entry_btn = PushButton(FIF.ADD, "添加条目", parent)
     toolbar.addWidget(open_btn)
     toolbar.addWidget(save_btn)  # 添加保存按钮到工具栏
+    toolbar.addWidget(add_entry_btn)
     toolbar.addWidget(search_edit)  # 添加搜索栏到工具栏
     toolbar.addStretch()
 
@@ -27,4 +29,4 @@ def build_toolbar(parent):
     no_file_label.setStyleSheet("color: #666666;")
     no_file_label.setVisible(True)
 
-    return toolbar, open_btn, save_btn, search_edit, no_file_label, toolbar_card, toolbar_card_layout
+    return toolbar, open_btn, save_btn, search_edit, no_file_label, toolbar_card, toolbar_card_layout, add_entry_btn

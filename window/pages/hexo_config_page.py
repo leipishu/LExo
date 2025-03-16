@@ -1,11 +1,51 @@
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QFileDialog
-from qfluentwidgets import CardWidget
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QFileDialog, QLabel, QPushButton, QDialog, QFormLayout, QHBoxLayout
+from qfluentwidgets import CardWidget, PushButton, MessageBoxBase, LineEdit, MessageBox, SubtitleLabel, InfoBar, InfoBarPosition, InfoBarIcon
+
 from utils.hx_config.search_function import search_yaml
 from utils.hx_config.file_mgr import load_yaml, save_yaml
 from components.hx_config.toolbar_builder import build_toolbar
 from components.hx_config.content_builder import build_content_area, add_yaml_section
 from ruamel.yaml import YAML
+
+
+class CustomMessageBox(MessageBoxBase):
+    """ Custom message box for adding YAML entries """
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.key_edit = LineEdit()
+        self.value_edit = LineEdit()
+
+        self.key_edit.setPlaceholderText("输入键")
+        self.key_edit.setClearButtonEnabled(True)
+        self.value_edit.setPlaceholderText("输入值")
+        self.value_edit.setClearButtonEnabled(True)
+
+        self.viewLayout.addWidget(SubtitleLabel('添加自定义条目'))
+        self.viewLayout.addWidget(self.key_edit)
+        self.viewLayout.addWidget(self.value_edit)
+
+        self.widget.setMinimumWidth(400)
+        self.warningLabel = None  # 用于存储警告标签
+
+    def validate(self):
+        """ Validate the input data """
+        if not self.key_edit.text().strip() or not self.value_edit.text().strip():
+            # 检查是否已经存在警告标签
+            if self.warningLabel is None:
+                self.warningLabel = QLabel("键和值都不能为空")
+                self.warningLabel.setStyleSheet("color: red")
+                self.viewLayout.addWidget(self.warningLabel)
+            else:
+                # 如果已经存在，确保它可见
+                self.warningLabel.setVisible(True)
+            return False
+        else:
+            # 如果输入有效，隐藏警告标签（如果存在）
+            if self.warningLabel is not None:
+                self.warningLabel.setVisible(False)
+        return True
 
 class HexoConfigPage(QWidget):
     def __init__(self, parent=None):
@@ -21,8 +61,8 @@ class HexoConfigPage(QWidget):
         self.main_layout.setSpacing(7)
 
         # 创建工具栏
-        (self.toolbar, self.open_btn, self.save_btn, self.search_edit, 
-         self.no_file_label, self.toolbar_card, self.toolbar_card_layout) = build_toolbar(self)
+        (self.toolbar, self.open_btn, self.save_btn, self.search_edit,
+         self.no_file_label, self.toolbar_card, self.toolbar_card_layout, self.add_entry_btn) = build_toolbar(self)
         self.toolbar_card_layout.addLayout(self.toolbar)
 
         # 创建滚动区域
@@ -39,6 +79,7 @@ class HexoConfigPage(QWidget):
         self.search_edit.searchSignal.connect(self.search)
         self.search_edit.clearSignal.connect(self.clear_search)
         self.save_btn.clicked.connect(self.save_yaml)
+        self.add_entry_btn.clicked.connect(self.add_custom_entry)
 
     def clear_text_edits(self):
         """清空现有内容"""
@@ -94,3 +135,124 @@ class HexoConfigPage(QWidget):
             original_data = YAML().load(f)
 
         save_yaml(self.file_path, self.display_data, original_data)
+
+        # 显示保存成功的消息条
+        InfoBar.success(
+            title='保存成功',
+            content="YAML 文件已成功保存。",
+            orient=Qt.Horizontal,
+            isClosable=True,
+            position=InfoBarPosition.TOP_RIGHT,  # 显示在右上角
+            duration=2000,  # 2秒后自动消失
+            parent=self
+        )
+
+    def add_custom_entry(self):
+        """弹出对话框让用户添加自定义的 YAML 条目"""
+        w = CustomMessageBox(self)
+        if w.exec():
+            key = w.key_edit.text().strip()
+            value = w.value_edit.text().strip()
+
+            if not key or not value:
+                InfoBar.error(
+                    title='输入错误',
+                    content="键和值都不能为空",
+                    orient=Qt.Horizontal,
+                    isClosable=True,
+                    position=InfoBarPosition.TOP_RIGHT,
+                    duration=2000,
+                    parent=self
+                )
+                return
+
+            if self.file_path:
+                if key not in self.yaml_data:
+                    self.yaml_data[key] = value
+                    self.display_data[key] = value
+                    add_yaml_section({key: value}, self.scroll_layout, self.display_data)
+                    InfoBar.success(
+                        title='添加成功',
+                        content="条目已成功添加。",
+                        orient=Qt.Horizontal,
+                        isClosable=True,
+                        position=InfoBarPosition.TOP_RIGHT,
+                        duration=2000,
+                        parent=self
+                    )
+                else:
+                    InfoBar.warning(
+                        title='键已存在',
+                        content="该键已存在于 YAML 文件中",
+                        orient=Qt.Horizontal,
+                        isClosable=True,
+                        position=InfoBarPosition.TOP_RIGHT,
+                        duration=2000,
+                        parent=self
+                    )
+            else:
+                InfoBar.info(
+                    title='文件未加载',
+                    content="请先加载一个 YAML 文件",
+                    orient=Qt.Horizontal,
+                    isClosable=True,
+                    position=InfoBarPosition.TOP_RIGHT,
+                    duration=2000,
+                    parent=self
+                )
+
+    def add_entry(self, dialog):
+        """添加新的 YAML 条目"""
+        key = self.key_edit.text().strip()
+        value = self.value_edit.text().strip()
+
+        if not key or not value:
+            InfoBar.error(
+                title='输入错误',
+                content="键和值都不能为空",
+                orient=Qt.Horizontal,
+                isClosable=True,
+                position=InfoBarPosition.TOP_RIGHT,
+                duration=2000,
+                parent=self
+            )
+            return
+
+        if self.file_path:
+            if key not in self.yaml_data:
+                self.yaml_data[key] = value
+                self.display_data[key] = value
+                add_yaml_section({key: value}, self.scroll_layout, self.display_data)
+                InfoBar.success(
+                    title='添加成功',
+                    content="条目已成功添加。",
+                    orient=Qt.Horizontal,
+                    isClosable=True,
+                    position=InfoBarPosition.TOP_RIGHT,
+                    duration=2000,
+                    parent=self
+                )
+            else:
+                InfoBar.warning(
+                    title='键已存在',
+                    content="该键已存在于 YAML 文件中",
+                    orient=Qt.Horizontal,
+                    isClosable=True,
+                    position=InfoBarPosition.TOP_RIGHT,
+                    duration=2000,
+                    parent=self
+                )
+        else:
+            InfoBar.info(
+                title='文件未加载',
+                content="请先加载一个 YAML 文件",
+                orient=Qt.Horizontal,
+                isClosable=True,
+                position=InfoBarPosition.TOP_RIGHT,
+                duration=2000,
+                parent=self
+            )
+
+        self.key_edit.clear()
+        self.value_edit.clear()
+        dialog.close()
