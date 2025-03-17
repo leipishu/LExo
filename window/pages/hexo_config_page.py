@@ -88,8 +88,6 @@ class HexoConfigPage(QWidget):
             widget = item.widget()
             if widget:
                 widget.deleteLater()
-        self.no_file_label.setVisible(True)  # 重新显示提示标签
-        self.save_btn.setEnabled(False)  # 禁用保存按钮
 
     def load_yaml(self):
         """加载YAML文件"""
@@ -108,7 +106,7 @@ class HexoConfigPage(QWidget):
         self.save_btn.setEnabled(True)  # 启用保存按钮
 
         # 动态创建带标题的编辑区
-        add_yaml_section(self.yaml_data, self.scroll_layout, self.display_data)
+        add_yaml_section(self.yaml_data, self.scroll_layout, self.display_data, None, self)
 
     def search(self, text):
         """搜索功能"""
@@ -124,7 +122,7 @@ class HexoConfigPage(QWidget):
             if widget:
                 widget.deleteLater()
         self.no_file_label.setVisible(False)  # 隐藏提示标签
-        add_yaml_section(self.yaml_data, self.scroll_layout, self.display_data)  # 重新加载原始的 YAML 数据
+        add_yaml_section(self.yaml_data, self.scroll_layout, self.display_data, None, self)
 
     def save_yaml(self):
         """保存YAML文件"""
@@ -256,3 +254,68 @@ class HexoConfigPage(QWidget):
         self.key_edit.clear()
         self.value_edit.clear()
         dialog.close()
+
+    def remove_entry(self, key):
+        """删除指定键的条目"""
+        if self.file_path:
+            # 检查键是否存在
+            if self._key_exists(key, self.yaml_data):
+                # 删除键
+                self._delete_key(key, self.yaml_data)
+                # 从 display_data 中删除对应的键
+                if key in self.display_data:
+                    del self.display_data[key]
+                # 刷新界面
+                self.clear_text_edits()
+                add_yaml_section(self.yaml_data, self.scroll_layout, self.display_data, None, self)
+                InfoBar.success(
+                    title='删除成功',
+                    content=f"条目 '{key}' 已成功删除。",
+                    orient=Qt.Horizontal,
+                    isClosable=True,
+                    position=InfoBarPosition.TOP_RIGHT,
+                    duration=2000,
+                    parent=self
+                )
+            else:
+                InfoBar.warning(
+                    title='条目不存在',
+                    content=f"条目 '{key}' 不存在。",
+                    orient=Qt.Horizontal,
+                    isClosable=True,
+                    position=InfoBarPosition.TOP_RIGHT,
+                    duration=2000,
+                    parent=self
+                )
+        else:
+            InfoBar.info(
+                title='文件未加载',
+                content="请先加载一个 YAML 文件",
+                orient=Qt.Horizontal,
+                isClosable=True,
+                position=InfoBarPosition.TOP_RIGHT,
+                duration=2000,
+                parent=self
+            )
+
+    def _key_exists(self, key, data):
+        """检查键是否存在"""
+        if '.' in key:
+            parent_key, child_key = key.split('.', 1)
+            if parent_key in data and isinstance(data[parent_key], dict):
+                return self._key_exists(child_key, data[parent_key])
+            return False
+        return key in data
+
+    def _delete_key(self, key, data):
+        """递归删除键"""
+        if '.' in key:
+            parent_key, child_key = key.split('.', 1)
+            if parent_key in data and isinstance(data[parent_key], dict):
+                self._delete_key(child_key, data[parent_key])
+                # 如果父键的字典变为空，也删除父键
+                if not data[parent_key]:
+                    del data[parent_key]
+        else:
+            if key in data:
+                del data[key]
