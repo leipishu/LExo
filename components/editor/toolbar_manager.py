@@ -51,7 +51,7 @@ class ToolbarManager:
         self.title_menu.addActions([self.title_btn_h1, self.title_btn_h2, self.title_btn_h3, self.title_btn_h4, self.title_btn_h5, self.title_btn_h6])
         self.title_btn.setFlyout(self.title_menu)
 
-        self.color_btn = PushButton(FIF.BACKGROUND_FILL,"颜色")
+        self.color_btn = PushButton(FIF.PALETTE,"颜色")
 
         return self.text_format_toolbar
 
