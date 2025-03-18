@@ -110,7 +110,7 @@ class MarkdownEditorPage(QWidget, PreviewPanel, ToolbarManager):
         self.color_dialog = ColorDialog(QColor(0, 255, 255), "Choose Color", self, enableAlpha=False)
         self.color_dialog.show()
         self.color_dialog.colorChanged.connect(lambda color: wrap_color(editor=self.editor, color=color.name()))
-        self.color_dialog.colorChanged.connect(lambda color: self.color_btn.setIcon(FIF.PALETTE.icon(color=color.name())))
+        # self.color_dialog.colorChanged.connect(lambda color: self.color_btn.setIcon(FIF.PALETTE.icon(color=color.name())))
 
     def async_image_load(self, html):
         """异步加载图片并替换为占位符"""
