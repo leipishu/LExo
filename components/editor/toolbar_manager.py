@@ -35,10 +35,10 @@ class ToolbarManager:
 
     def create_format_toolbar(self):
         self.text_format_toolbar = QHBoxLayout()
-        self.bold_btn = PushButton("加粗")
-        self.highlight_btn = PushButton("高亮")
-        self.italic_btn = PushButton("斜体")
-        self.underline_btn = PushButton("下划线")
+        self.bold_btn = PushButton(FIF.EDIT,"加粗")
+        self.highlight_btn = PushButton(FIF.EDIT,"高亮")
+        self.italic_btn = PushButton(FIF.EDIT,"斜体")
+        self.underline_btn = PushButton(FIF.EDIT,"下划线")
 
         self.title_btn = SplitPushButton(FIF.FONT, "标题")
         self.title_menu = RoundMenu(parent=self.title_btn)
@@ -50,6 +50,8 @@ class ToolbarManager:
         self.title_btn_h6 = Action(FIF.FONT, "标题6")
         self.title_menu.addActions([self.title_btn_h1, self.title_btn_h2, self.title_btn_h3, self.title_btn_h4, self.title_btn_h5, self.title_btn_h6])
         self.title_btn.setFlyout(self.title_menu)
+
+        self.color_btn = PushButton(FIF.BACKGROUND_FILL,"颜色")
 
         return self.text_format_toolbar
 
@@ -72,4 +74,5 @@ class ToolbarManager:
         self.text_format_toolbar.addWidget(self.highlight_btn)
         self.text_format_toolbar.addWidget(self.underline_btn)
         self.text_format_toolbar.addWidget(self.title_btn)
+        self.text_format_toolbar.addWidget(self.color_btn)
         self.text_format_toolbar.addStretch(1)

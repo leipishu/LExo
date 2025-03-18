@@ -31,7 +31,7 @@ class MainWindow(FluentWindow):
         # 正确使用图标参数（使用FIF枚举或图标路径）
         self.addSubInterface(
             interface=self.editor_page,
-            icon=FIF.EDIT,  # 使用内置图标
+            icon=FIF.LABEL,  # 使用内置图标
             text="Markdown 编辑器",
             position=NavigationItemPosition.TOP
         )

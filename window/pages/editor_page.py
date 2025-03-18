@@ -1,7 +1,8 @@
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QSplitter, QPlainTextEdit, QApplication
 from PySide6.QtCore import Qt, QTimer, QByteArray, QBuffer, QUrl
 from PySide6.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkReply
-from qfluentwidgets import setTheme, Theme, ScrollArea, PlainTextEdit, FluentIcon, CardWidget
+from PySide6.QtGui import QColor
+from qfluentwidgets import setTheme, Theme, ScrollArea, PlainTextEdit, FluentIcon, CardWidget, ColorDialog
 import re
 
 from components.editor.line_number import LineNumberEditor
@@ -77,6 +78,7 @@ class MarkdownEditorPage(QWidget, PreviewPanel, ToolbarManager):
         self.title_btn_h4.triggered.connect(lambda: title_h4(self.editor))
         self.title_btn_h5.triggered.connect(lambda: title_h5(self.editor))
         self.title_btn_h6.triggered.connect(lambda: title_h6(self.editor))
+        self.color_btn.clicked.connect(self.color_logic)
         self.show_frame_btn.triggered.connect(self.toggle_right_frame)
         self.save_btn.clicked.connect(lambda: save_markdown_file(self, self.editor, self))
         self.save_btn_2.triggered.connect(lambda: save_markdown_file(self, self.editor, self))
@@ -88,6 +90,26 @@ class MarkdownEditorPage(QWidget, PreviewPanel, ToolbarManager):
 
     def toggle_frontmatter(self):
         self.frontmatter_manager.toggle_visibility()
+
+    def toggle_right_frame(self):
+        if not self.right_scroll:
+            self.right_scroll = self.create_preview_area()
+            self.editor_container.addWidget(self.right_scroll)
+            self.editor_container.setStyleSheet("QSplitter::handle { background: transparent; border: none; }")
+            self.right_scroll.setMinimumWidth(200)
+            self.update_preview()
+        else:
+            self.right_scroll.setVisible(not self.right_scroll.isVisible())
+
+        if self.right_scroll and self.right_scroll.isVisible():
+            self.editor_container.setSizes([300, 100])
+        else:
+            self.editor_container.setSizes([400])
+
+    def color_logic(self):
+        self.color_dialog = ColorDialog(QColor(0, 255, 255), "Choose Color", self, enableAlpha=False)
+        self.color_dialog.show()
+        self.color_dialog.colorChanged.connect(lambda color: wrap_color(editor=self.editor, color=color.name()))
 
     def async_image_load(self, html):
         """异步加载图片并替换为占位符"""
@@ -136,21 +158,6 @@ class MarkdownEditorPage(QWidget, PreviewPanel, ToolbarManager):
             if self.right_scroll and self.right_scroll.isVisible():
                 self.update_preview()
         reply.deleteLater()
-
-    def toggle_right_frame(self):
-        if not self.right_scroll:
-            self.right_scroll = self.create_preview_area()
-            self.editor_container.addWidget(self.right_scroll)
-            self.editor_container.setStyleSheet("QSplitter::handle { background: transparent; border: none; }")
-            self.right_scroll.setMinimumWidth(200)
-            self.update_preview()
-        else:
-            self.right_scroll.setVisible(not self.right_scroll.isVisible())
-
-        if self.right_scroll and self.right_scroll.isVisible():
-            self.editor_container.setSizes([300, 100])
-        else:
-            self.editor_container.setSizes([400])
 
     def update_preview(self):
         """带节流机制的预览更新"""

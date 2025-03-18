@@ -23,6 +23,9 @@ def wrap_highlight(editor):
 def wrap_underline(editor):
     wrap_selection_with_symbol(editor, "<u>", "</u>")
 
+def wrap_color(editor, color):
+    wrap_selection_with_symbol(editor, f"<font color={color}>", "</font>")
+
 def _insert_heading(editor, level):
     cursor = editor.textCursor()
     mark = '#' * level + ' '
