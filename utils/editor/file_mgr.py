@@ -9,8 +9,15 @@ def extract_frontmatter(content):
     pattern = r'^---\s*\n(.*?)\n---\s*\n(.*)'
     match = re.search(pattern, content, re.DOTALL)
     if match:
-        return match.group(1).strip(), match.group(2).strip()
-    return None, content
+        frontmatter = match.group(1).strip()
+        body = match.group(2).strip()
+        # 提取 title
+        title_match = re.search(r'^title:\s*(.*)$', frontmatter, re.MULTILINE)
+        title = title_match.group(1).strip() if title_match else ""
+        # 移除 title 部分
+        frontmatter_without_title = re.sub(r'^title:\s*(.*)\n', '', frontmatter, flags=re.MULTILINE)
+        return frontmatter_without_title, title, body
+    return None, "", content
 
 def open_markdown_file(parent, editor, editor_page):
     path, _ = QFileDialog.getOpenFileName(
@@ -19,20 +26,20 @@ def open_markdown_file(parent, editor, editor_page):
         with open(path, 'r', encoding='utf-8') as f:
             full_content = f.read()
 
-        # 解析frontmatter
-        frontmatter, body = extract_frontmatter(full_content)
+        # 解析 frontmatter 和正文
+        frontmatter, title, body = extract_frontmatter(full_content)
 
-        # 设置编辑器内容
+        # 设置主编辑器的内容
         editor.setPlainText(body)
 
-        # 设置frontmatter
+        # 设置 frontmatter 管理器的内容
         if frontmatter:
-            editor_page.frontmatter_manager.set_content(frontmatter)
-            editor_page.frontmatter_manager.toggle_visibility(True)
+            editor_page.frontmatter_manager.title_editor.setText(title)  # 设置 title
+            editor_page.frontmatter_manager.editor.setPlainText(frontmatter)  # 设置 frontmatter 内容
+            editor_page.frontmatter_manager.toggle_visibility(True)  # 显示 frontmatter 区域
         else:
-            # 新增清空操作
-            editor_page.frontmatter_manager.set_content("")  # 清空内容
-            editor_page.frontmatter_manager.toggle_visibility(False)  # 隐藏
+            editor_page.frontmatter_manager.clear_content()  # 清空 frontmatter 区域
+            editor_page.frontmatter_manager.toggle_visibility(False)  # 隐藏 frontmatter 区域
 
         editor_page.current_file_path = path
 
