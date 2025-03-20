@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit
+from PySide6.QtWidgets import QWidget, QVBoxLayout,QHBoxLayout, QLabel, QLineEdit
 from qfluentwidgets import ScrollArea, PlainTextEdit, LineEdit, CardWidget, BodyLabel # 导入 CardWidget
 import re
 
@@ -28,7 +28,7 @@ class FrontmatterManager:
         layout = QVBoxLayout(container)
 
         # 添加 title 编辑部分
-        title_layout = QVBoxLayout()
+        title_layout = QHBoxLayout()  # 更改为 QHBoxLayout
         title_layout.addWidget(self.title_label)
         title_layout.addWidget(self.title_editor)
         layout.addLayout(title_layout)
