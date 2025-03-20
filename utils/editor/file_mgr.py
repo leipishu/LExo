@@ -11,13 +11,16 @@ def extract_frontmatter(content):
     if match:
         frontmatter = match.group(1).strip()
         body = match.group(2).strip()
-        # 提取 title
+        # 提取 title 和 date
         title_match = re.search(r'^title:\s*(.*)$', frontmatter, re.MULTILINE)
+        date_match = re.search(r'^date:\s*(.*)$', frontmatter, re.MULTILINE)
         title = title_match.group(1).strip() if title_match else ""
-        # 移除 title 部分
-        frontmatter_without_title = re.sub(r'^title:\s*(.*)\n', '', frontmatter, flags=re.MULTILINE)
-        return frontmatter_without_title, title, body
-    return None, "", content
+        date = date_match.group(1).strip() if date_match else ""
+        # 移除 title 和 date 部分
+        frontmatter_without_title_and_date = re.sub(r'^title:\s*(.*)\n', '', frontmatter, flags=re.MULTILINE)
+        frontmatter_without_title_and_date = re.sub(r'^date:\s*(.*)\n', '', frontmatter_without_title_and_date, flags=re.MULTILINE)
+        return frontmatter_without_title_and_date, title, date, body
+    return None, "", "", content
 
 def open_markdown_file(parent, editor, editor_page):
     path, _ = QFileDialog.getOpenFileName(
@@ -27,15 +30,14 @@ def open_markdown_file(parent, editor, editor_page):
             full_content = f.read()
 
         # 解析 frontmatter 和正文
-        frontmatter, title, body = extract_frontmatter(full_content)
+        frontmatter, title, date, body = extract_frontmatter(full_content)
 
         # 设置主编辑器的内容
         editor.setPlainText(body)
 
         # 设置 frontmatter 管理器的内容
-        if frontmatter:
-            editor_page.frontmatter_manager.title_editor.setText(title)  # 设置 title
-            editor_page.frontmatter_manager.editor.setPlainText(frontmatter)  # 设置 frontmatter 内容
+        if frontmatter or title or date:
+            editor_page.frontmatter_manager.set_content(frontmatter, title, date)
             editor_page.frontmatter_manager.toggle_visibility(True)  # 显示 frontmatter 区域
         else:
             editor_page.frontmatter_manager.clear_content()  # 清空 frontmatter 区域
