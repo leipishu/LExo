@@ -53,7 +53,7 @@ def _save_content(path, editor, frontmatter_manager):
     # 组装最终内容
     final_content = ""
     if frontmatter:
-        final_content = f"---\n{frontmatter}\n---\n\n{body}"
+        final_content = f"{frontmatter}\n\n{body}"
     else:
         final_content = body
 
