@@ -6,6 +6,7 @@ from qfluentwidgets import FluentIcon as FIF
 from window.pages.editor_page import MarkdownEditorPage
 from window.pages.about_page import AboutPage
 from window.pages.hexo_config_page import HexoConfigPage
+from window.pages.command_page import CommandPage
 
 class MainWindow(FluentWindow):
     def __init__(self):
@@ -15,9 +16,11 @@ class MainWindow(FluentWindow):
         self.editor_page = MarkdownEditorPage(self)
         self.about_page = AboutPage(self)
         self.config_page = HexoConfigPage(self)
+        self.command_page = CommandPage(self)
         self.editor_page.setObjectName("MD_Editor")
         self.about_page.setObjectName("About")
         self.config_page.setObjectName("Config")
+        self.command_page.setObjectName("Command")
 
         # 初始化导航栏
         self.initNavigation()
@@ -37,15 +40,22 @@ class MainWindow(FluentWindow):
         )
 
         self.addSubInterface(
-            interface=self.about_page,
-            icon=FIF.INFO,  # 使用内置图标
-            text="关于",
-            position=NavigationItemPosition.BOTTOM
-        )
-
-        self.addSubInterface(
             interface=self.config_page,
             icon=FIF.GLOBE,  # 使用内置图标
             text="Hexo 配置",
             position=NavigationItemPosition.TOP
+        )
+
+        self.addSubInterface(
+            interface=self.command_page,
+            icon=FIF.COMMAND_PROMPT,  # 使用内置图标
+            text="Hexo 命令",
+            position=NavigationItemPosition.TOP
+        )
+
+        self.addSubInterface(
+            interface=self.about_page,
+            icon=FIF.INFO,  # 使用内置图标
+            text="关于",
+            position=NavigationItemPosition.BOTTOM
         )
