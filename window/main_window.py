@@ -1,6 +1,6 @@
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon
-from qfluentwidgets import FluentWindow, NavigationItemPosition
+from qfluentwidgets import FluentWindow, NavigationItemPosition, Theme, setTheme, PushButton, Action
 from qfluentwidgets import FluentIcon as FIF
 
 from window.pages.editor_page import MarkdownEditorPage
@@ -23,6 +23,7 @@ class MainWindow(FluentWindow):
         self.command_page.setObjectName("Command")
 
         # 初始化导航栏
+        self.setupTheme(Theme.LIGHT)
         self.initNavigation()
 
         # 窗口设置
@@ -30,6 +31,10 @@ class MainWindow(FluentWindow):
         self.setWindowIcon(QIcon('./resources/img/App_Icon.png'))
         self.resize(1200, 800)
 
+    def setupTheme(self, theme):
+        """设置主题"""
+        setTheme(theme)
+        # 其他主题相关的设置代码...
     def initNavigation(self):
         # 正确使用图标参数（使用FIF枚举或图标路径）
         self.addSubInterface(

@@ -2,7 +2,7 @@ from PySide6.QtWidgets import QWidget, QVBoxLayout, QSplitter, QPlainTextEdit, Q
 from PySide6.QtCore import Qt, QTimer, QByteArray, QBuffer, QUrl
 from PySide6.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkReply
 from PySide6.QtGui import QColor
-from qfluentwidgets import setTheme, Theme, ScrollArea, PlainTextEdit, FluentIcon, CardWidget, ColorDialog, FluentIcon as FIF
+from qfluentwidgets import ScrollArea, PlainTextEdit, FluentIcon, CardWidget, ColorDialog, FluentIcon as FIF
 import re
 
 from components.editor.line_number import LineNumberEditor
@@ -27,12 +27,8 @@ class MarkdownEditorPage(QWidget, PreviewPanel, ToolbarManager):
         # 初始化界面
         self.network_manager = QNetworkAccessManager(self)
         self.image_cache = {}
-        self.setup_theme()
         self.initUI()
         self.initConnections()
-
-    def setup_theme(self):
-        setTheme(Theme.LIGHT)
 
     def initUI(self):
         self.layout = QVBoxLayout(self)
