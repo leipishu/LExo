@@ -17,7 +17,6 @@ from utils.editor.md_renderer import *
 class MarkdownEditorPage(QWidget, PreviewPanel, ToolbarManager):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setObjectName("MarkdownEditor")
         self.right_scroll = None
         self.current_file_path = None
         self.current_file = None
