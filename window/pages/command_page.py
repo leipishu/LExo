@@ -7,7 +7,7 @@ class CommandPage(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.main_layout = QVBoxLayout(self)
-        self.main_layout.setContentsMargins(20, 20, 20, 20)
+        self.main_layout.setContentsMargins(10,10,10,10)
         self.main_layout.setSpacing(15)
 
         # 创建基础指令卡片
