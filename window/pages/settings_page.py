@@ -1,6 +1,6 @@
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QFileDialog
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QFileDialog, QComboBox
 from qfluentwidgets import (
-    OptionsSettingCard,
+    ComboBoxSettingCard,
     HyperlinkCard,
     PushSettingCard,
     FluentIcon,
@@ -68,7 +68,7 @@ class SettingsPage(QWidget):
         self.setting_group = SettingCardGroup("常规设置", self)
 
         # 主题设置卡片
-        self.theme_card = OptionsSettingCard(
+        self.theme_card = ComboBoxSettingCard(
             configItem=cfg.themeMode,
             icon=FluentIcon.BRUSH,
             title="应用主题",
@@ -120,7 +120,7 @@ class SettingsPage(QWidget):
         self.report_group.addSettingCard(self.pr_card)
 
         # 绑定信号槽
-        self.theme_card.optionChanged.connect(self.on_theme_changed)
+        self.theme_card.comboBox.currentIndexChanged.connect(self.on_theme_changed)
         self.download_dir_card.clicked.connect(self.on_download_dir_clicked)
 
         # 将设置卡片组添加到布局
@@ -133,10 +133,12 @@ class SettingsPage(QWidget):
         # 应用 Fluent StyleSheet
         FluentStyleSheet.FLUENT_WINDOW.apply(self)
 
-    def on_theme_changed(self, theme):
+    def on_theme_changed(self, index):
         """主题切换槽函数"""
+        theme = self.theme_card.comboBox.itemText(index)  # 获取当前选择的主题字符串
+
         # 更新配置
-        cfg.themeMode.value = theme  # 直接使用 item 作为字符串值
+        cfg.themeMode.value = theme
 
         # 应用主题
         if theme == "Light":
@@ -145,9 +147,6 @@ class SettingsPage(QWidget):
             setTheme(Theme.DARK)
         else:  # 跟随系统设置
             setTheme(Theme.AUTO)
-
-        # 显式更新设置卡的显示内容
-        self.theme_card.configItem.value = theme  # 直接更新字符串值
 
         # 保存配置
         qconfig.save()
