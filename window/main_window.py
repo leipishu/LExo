@@ -26,7 +26,7 @@ class MainWindow(FluentWindow):
         self.settings_page.setObjectName("Settings")
 
         # 初始化导航栏
-        self.setupTheme(Theme.LIGHT)
+        # self.setupTheme(Theme.LIGHT)
         self.initNavigation()
 
         # 窗口设置

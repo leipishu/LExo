@@ -129,3 +129,5 @@ dmypy.json
 /dist
 /build
 /releases
+
+/app
