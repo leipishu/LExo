@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QFileDialog, QComboBox
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QFileDialog
 from qfluentwidgets import (
     ComboBoxSettingCard,
     HyperlinkCard,
@@ -135,10 +135,11 @@ class SettingsPage(QWidget):
 
     def on_theme_changed(self, index):
         """主题切换槽函数"""
-        theme = self.theme_card.comboBox.itemText(index)  # 获取当前选择的主题字符串
+        # 获取当前选中的主题字符串
+        theme = self.theme_card.comboBox.itemText(index)
 
         # 更新配置
-        cfg.themeMode.value = theme
+        cfg.themeMode.value = Theme[theme.upper()]
 
         # 应用主题
         if theme == "Light":
