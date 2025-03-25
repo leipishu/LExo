@@ -1,11 +1,9 @@
-from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout
+from PySide6.QtWidgets import QWidget, QVBoxLayout
 from qfluentwidgets import OptionsSettingCard, HyperlinkCard, PushSettingCard, FluentIcon, SettingCardGroup, OptionsConfigItem, OptionsValidator
 
 class SettingsPage(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("设置页面")
-        self.resize(800, 600)
 
         # 创建布局
         self.layout = QVBoxLayout(self)
@@ -34,25 +32,6 @@ class SettingsPage(QWidget):
         )
         self.setting_group.addSettingCard(self.theme_card)
 
-        # 添加 HyperlinkCard
-        self.help_card = HyperlinkCard(
-            url="https://qfluentwidgets.com",
-            text="打开帮助页面",
-            icon=FluentIcon.HELP,
-            title="帮助",
-            content="发现 PyQt-Fluent-Widgets 的最佳实践"
-        )
-        self.setting_group.addSettingCard(self.help_card)
-
-        self.feedback_card = HyperlinkCard(
-            url="https://github.com/PyQt-Fluent-Widgets/PyQt-Fluent-Widgets/issues",
-            text="提交反馈",
-            icon=FluentIcon.FEEDBACK,
-            title="反馈",
-            content="帮助我们改进产品"
-        )
-        self.setting_group.addSettingCard(self.feedback_card)
-
         # 添加 PushSettingCard
         self.download_dir_card = PushSettingCard(
             text="选择文件夹",
@@ -62,8 +41,39 @@ class SettingsPage(QWidget):
         )
         self.setting_group.addSettingCard(self.download_dir_card)
 
+        self.report_group = SettingCardGroup("关于与反馈", self)
+
+        # 添加 HyperlinkCard
+        self.help_card = HyperlinkCard(
+            url="https://www.leipishu.top/",
+            text="打开帮助页面",
+            icon=FluentIcon.HELP,
+            title="帮助(暂未完成)",
+            content="发现 LExo 的最佳实践"
+        )
+        self.report_group.addSettingCard(self.help_card)
+
+        self.issue_card = HyperlinkCard(
+            url="https://github.com/leipishu/LExo/issues",
+            text="提交ISSUES",
+            icon=FluentIcon.FEEDBACK,
+            title="BUG反馈",
+            content="帮助我们修复BUG"
+        )
+        self.report_group.addSettingCard(self.issue_card)
+
+        self.pr_card = HyperlinkCard(
+            url="https://github.com/leipishu/LExo/pulls",
+            text="提交PR",
+            icon=FluentIcon.CODE,
+            title="贡献代码",
+            content="帮助我们改进软件"
+        )
+        self.report_group.addSettingCard(self.pr_card)
+
         # 将设置卡片组添加到布局
         self.layout.addWidget(self.setting_group)
+        self.layout.addWidget(self.report_group)
 
         # 伸展布局，使组件居中显示
         self.layout.addStretch(1)
