@@ -16,142 +16,23 @@ from qfluentwidgets import (
 )
 import json
 import os
+from components.app_settings import settings_ui
+from utils.app_settings.config import cfg
 
 
 # 定义配置类
-class Config(QConfig):
-    # 主题模式配置项
-    themeMode = OptionsConfigItem(
-        group="QFluentWidgets",  # 修改组为 QFluentWidgets
-        name="ThemeMode",
-        default=Theme.LIGHT,
-        validator=OptionsValidator([Theme.LIGHT, Theme.DARK, Theme.AUTO]),
-        restart=True,
-    )
-    # 下载目录配置项
-    downloadFolder = ConfigItem(
-        group="Paths",
-        name="DownloadFolder",
-        default="D:/Users/下载",
-    )
-
-    def toDict(self):
-        cfg_dict = super().toDict()
-        # 将 Theme 枚举类型转换为字符串
-        if "QFluentWidgets" in cfg_dict and "ThemeMode" in cfg_dict["QFluentWidgets"]:
-            theme_value = cfg_dict["QFluentWidgets"]["ThemeMode"]
-            if isinstance(theme_value, Theme):
-                cfg_dict["QFluentWidgets"]["ThemeMode"] = theme_value.name
-        return cfg_dict
-
-    @classmethod
-    def fromDict(cls, cfg_dict):
-        config = cls()
-        # 将字符串转换回 Theme 枚举类型
-        if "QFluentWidgets" in cfg_dict and "ThemeMode" in cfg_dict["QFluentWidgets"]:
-            theme_mode = cfg_dict["QFluentWidgets"]["ThemeMode"]
-            if isinstance(theme_mode, str):
-                cfg_dict["QFluentWidgets"]["ThemeMode"] = Theme[theme_mode]
-        super().fromDict(cfg_dict)
-        return config
-
-
-cfg = Config()
-qconfig.load("app/config/config.json", cfg)
-
-
+# 定义配置类
 class SettingsPage(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.cfg = cfg
 
-        # 创建布局
-        self.layout = QVBoxLayout(self)
-        self.layout.setContentsMargins(30, 20, 30, 20)
-        self.layout.setSpacing(15)
-
-        # 创建设置卡片组
-        self.setting_group = SettingCardGroup("常规设置", self)
-
-        # 主题设置卡片
-        self.theme_card = ComboBoxSettingCard(
-            configItem=cfg.themeMode,
-            icon=FluentIcon.BRUSH,
-            title="应用主题",
-            content="调整你的应用外观",
-            texts=["Light", "Dark", "Auto"],  # 保持与 validator 的选项一致
-        )
-        self.setting_group.addSettingCard(self.theme_card)
-
-        # 文件夹选择卡片
-        self.download_dir_card = PushSettingCard(
-            text="选择文件夹",
-            icon=FluentIcon.DOWNLOAD,
-            title="下载目录",
-            content=cfg.downloadFolder.value,  # 使用正确的方式获取值
-        )
-        self.setting_group.addSettingCard(self.download_dir_card)
-
-        # 关于与反馈卡片组
-        self.report_group = SettingCardGroup("关于与反馈", self)
-
-        # 帮助卡片
-        self.help_card = HyperlinkCard(
-            url="https://www.leipishu.top/",
-            text="打开帮助页面",
-            icon=FluentIcon.HELP,
-            title="帮助(暂未完成)",
-            content="发现 LExo 的最佳实践",
-        )
-        self.report_group.addSettingCard(self.help_card)
-
-        # BUG反馈卡片
-        self.issue_card = HyperlinkCard(
-            url="https://github.com/leipishu/LExo/issues",
-            text="提交ISSUES",
-            icon=FluentIcon.FEEDBACK,
-            title="BUG反馈",
-            content="帮助我们修复BUG",
-        )
-        self.report_group.addSettingCard(self.issue_card)
-
-        # 贡献代码卡片
-        self.pr_card = HyperlinkCard(
-            url="https://github.com/leipishu/LExo/pulls",
-            text="提交PR",
-            icon=FluentIcon.CODE,
-            title="贡献代码",
-            content="帮助我们改进软件",
-        )
-        self.report_group.addSettingCard(self.pr_card)
+        # 调用独立的 UI 构建函数
+        settings_ui.setup_ui(self)
 
         # 绑定信号槽
         self.theme_card.comboBox.currentIndexChanged.connect(self.on_theme_changed)
         self.download_dir_card.clicked.connect(self.on_download_dir_clicked)
-
-        # 读取 config.json 文件并设置初始主题
-        config_path = "app/config/config.json"
-        if os.path.exists(config_path):
-            with open(config_path, 'r', encoding='utf-8') as file:
-                config_data = json.load(file)
-                theme_mode_str = config_data.get("QFluentWidgets", {}).get("ThemeMode", "LIGHT")
-                if theme_mode_str.upper() == "DARK":
-                    initial_theme_index = 1
-                elif theme_mode_str.upper() == "AUTO":
-                    initial_theme_index = 2
-                else:
-                    initial_theme_index = 0
-                self.theme_card.comboBox.setCurrentIndex(initial_theme_index)
-                setTheme(cfg.themeMode.value)
-
-        # 将设置卡片组添加到布局
-        self.layout.addWidget(self.setting_group)
-        self.layout.addWidget(self.report_group)
-
-        # 伸展布局，使组件居中显示
-        self.layout.addStretch(1)
-
-        # 应用 Fluent StyleSheet
-        FluentStyleSheet.FLUENT_WINDOW.apply(self)
 
     def on_theme_changed(self, index):
         """主题切换槽函数"""
