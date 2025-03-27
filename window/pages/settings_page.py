@@ -14,12 +14,15 @@ from qfluentwidgets import (
     FluentStyleSheet,
     ConfigItem,
 )
+import json
+import os
+
 
 # 定义配置类
 class Config(QConfig):
     # 主题模式配置项
     themeMode = OptionsConfigItem(
-        group="MainWindow",
+        group="QFluentWidgets",  # 修改组为 QFluentWidgets
         name="ThemeMode",
         default=Theme.LIGHT,
         validator=OptionsValidator([Theme.LIGHT, Theme.DARK, Theme.AUTO]),
@@ -31,25 +34,27 @@ class Config(QConfig):
         name="DownloadFolder",
         default="D:/Users/下载",
     )
+
     def toDict(self):
         cfg_dict = super().toDict()
         # 将 Theme 枚举类型转换为字符串
-        if "MainWindow" in cfg_dict and "ThemeMode" in cfg_dict["MainWindow"]:
-            theme_value = cfg_dict["MainWindow"]["ThemeMode"]
+        if "QFluentWidgets" in cfg_dict and "ThemeMode" in cfg_dict["QFluentWidgets"]:
+            theme_value = cfg_dict["QFluentWidgets"]["ThemeMode"]
             if isinstance(theme_value, Theme):
-                cfg_dict["MainWindow"]["ThemeMode"] = theme_value.name
+                cfg_dict["QFluentWidgets"]["ThemeMode"] = theme_value.name
         return cfg_dict
 
     @classmethod
     def fromDict(cls, cfg_dict):
         config = cls()
         # 将字符串转换回 Theme 枚举类型
-        if "MainWindow" in cfg_dict and "ThemeMode" in cfg_dict["MainWindow"]:
-            theme_mode = cfg_dict["MainWindow"]["ThemeMode"]
+        if "QFluentWidgets" in cfg_dict and "ThemeMode" in cfg_dict["QFluentWidgets"]:
+            theme_mode = cfg_dict["QFluentWidgets"]["ThemeMode"]
             if isinstance(theme_mode, str):
-                cfg_dict["MainWindow"]["ThemeMode"] = Theme[theme_mode]
+                cfg_dict["QFluentWidgets"]["ThemeMode"] = Theme[theme_mode]
         super().fromDict(cfg_dict)
         return config
+
 
 cfg = Config()
 qconfig.load("app/config/config.json", cfg)
@@ -122,6 +127,21 @@ class SettingsPage(QWidget):
         # 绑定信号槽
         self.theme_card.comboBox.currentIndexChanged.connect(self.on_theme_changed)
         self.download_dir_card.clicked.connect(self.on_download_dir_clicked)
+
+        # 读取 config.json 文件并设置初始主题
+        config_path = "app/config/config.json"
+        if os.path.exists(config_path):
+            with open(config_path, 'r', encoding='utf-8') as file:
+                config_data = json.load(file)
+                theme_mode_str = config_data.get("QFluentWidgets", {}).get("ThemeMode", "LIGHT")
+                if theme_mode_str.upper() == "DARK":
+                    initial_theme_index = 1
+                elif theme_mode_str.upper() == "AUTO":
+                    initial_theme_index = 2
+                else:
+                    initial_theme_index = 0
+                self.theme_card.comboBox.setCurrentIndex(initial_theme_index)
+                setTheme(cfg.themeMode.value)
 
         # 将设置卡片组添加到布局
         self.layout.addWidget(self.setting_group)
