@@ -1,18 +1,39 @@
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QHBoxLayout, QLineEdit
-from qfluentwidgets import GroupHeaderCardWidget, PrimaryPushButton, PushButton, LineEdit, InfoBar, InfoBarPosition, FluentIcon as FIF
+from qfluentwidgets import GroupHeaderCardWidget, PrimaryPushButton, PushButton, LineEdit, InfoBar, InfoBarPosition, FluentIcon as FIF, ScrollArea
 from components.hx_command.basic_commands import create_basic_commands_section
+from components.hx_command.install_commands import create_install_commands_section
 
 class CommandPage(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.main_layout = QVBoxLayout(self)
-        self.main_layout.setContentsMargins(10,10,10,10)
-        self.main_layout.setSpacing(15)
+        self.main_layout.setContentsMargins(10, 10, 10, 10)
+        self.main_layout.setSpacing(10)
+
+        # 创建滚动区域
+        self.scroll_area = ScrollArea()
+        self.scroll_area.setStyleSheet("background: transparent;")
+        self.scroll_area.setWidgetResizable(True)
+        self.main_layout.addWidget(self.scroll_area)
+
+        # 创建内容窗口部件
+        self.content_widget = QWidget()
+        self.content_widget.setStyleSheet("background: transparent;")
+        self.scroll_area.setWidget(self.content_widget)
+
+        # 创建内容布局
+        self.content_layout = QVBoxLayout(self.content_widget)
+        self.content_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+        self.content_layout.setContentsMargins(0, 0, 0, 0)
+        self.content_layout.setSpacing(10)
 
         # 创建基础指令卡片
         self.basic_commands_card = create_basic_commands_section(self)
-        self.main_layout.addWidget(self.basic_commands_card)
+        self.install_commands_card = create_install_commands_section(self)
+        self.content_layout.addWidget(self.install_commands_card)
+        self.content_layout.addWidget(self.basic_commands_card)
+
 
     # 以下是各个按钮的槽函数，目前为空，可根据实际需求实现具体逻辑
     def on_hexo_three_link_clicked(self):
@@ -97,3 +118,8 @@ class CommandPage(QWidget):
             duration=2000,
             parent=self
         )
+
+    def on_install_nodejs_clicked(self):
+        pass
+    def on_install_hexo_clicked(self):
+        pass

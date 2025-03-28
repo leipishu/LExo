@@ -7,9 +7,14 @@ def create_basic_commands_section(parent):
     # 创建卡片容器
     card = GroupHeaderCardWidget(parent)
     card.setTitle("基础指令")
+    card.setFixedHeight(540)
+
+    # 设置固定高度
+    max_height = 30  # 根据需要调整高度
 
     # 1. hexo三连组
     hexo_btn = PrimaryPushButton(FIF.PLAY_SOLID, "执行三连", card)
+    hexo_btn.setMaximumHeight(max_height)
     hexo_btn.clicked.connect(parent.on_hexo_three_link_clicked)
     card.addGroup(
         FIF.GLOBE,
@@ -20,6 +25,7 @@ def create_basic_commands_section(parent):
 
     # 2. 清除缓存组
     clear_btn = PushButton(FIF.PLAY, "清除", card)
+    clear_btn.setMaximumHeight(max_height)
     clear_btn.clicked.connect(parent.on_clear_cache_clicked)
     card.addGroup(
         FIF.DELETE,
@@ -30,6 +36,7 @@ def create_basic_commands_section(parent):
 
     # 3. 生成文件组
     generate_btn = PushButton(FIF.PLAY, "生成", card)
+    generate_btn.setMaximumHeight(max_height)
     generate_btn.clicked.connect(parent.on_generate_files_clicked)
     card.addGroup(
         FIF.DEVELOPER_TOOLS,
@@ -44,8 +51,10 @@ def create_basic_commands_section(parent):
     service_layout.setContentsMargins(0, 0, 0, 0)
 
     parent.service_btn = PushButton(FIF.PLAY, "启动", card)
+    parent.service_btn.setMaximumHeight(max_height)
     parent.service_btn.clicked.connect(parent.on_local_service_clicked)
     parent.service_edit = LineEdit(card)
+    parent.service_edit.setMaximumHeight(max_height)
     parent.service_edit.setPlaceholderText("输入端口")
 
     service_layout.addWidget(parent.service_btn)
@@ -59,6 +68,7 @@ def create_basic_commands_section(parent):
 
     # 5. 部署组
     deploy_btn = PushButton(FIF.PLAY, "部署", card)
+    deploy_btn.setMaximumHeight(max_height)
     deploy_btn.clicked.connect(parent.on_deploy_clicked)
     card.addGroup(
         FIF.CLOUD,
@@ -69,6 +79,7 @@ def create_basic_commands_section(parent):
 
     # 6. 初始化组
     init_btn = PushButton(FIF.PLAY, "初始化", card)
+    init_btn.setMaximumHeight(max_height)
     init_btn.clicked.connect(parent.on_init_clicked)
     card.addGroup(
         FIF.ADD,
