@@ -1,21 +1,9 @@
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QFileDialog
+from PySide6.QtWidgets import QWidget,QFileDialog
 from qfluentwidgets import (
-    ComboBoxSettingCard,
-    HyperlinkCard,
-    PushSettingCard,
-    FluentIcon,
-    SettingCardGroup,
-    OptionsConfigItem,
-    OptionsValidator,
     qconfig,
-    QConfig,
     Theme,
     setTheme,
-    FluentStyleSheet,
-    ConfigItem,
 )
-import json
-import os
 from components.app_settings import settings_ui
 from utils.app_settings.config import cfg
 
@@ -64,7 +52,6 @@ class SettingsPage(QWidget):
             # 更新配置
             cfg.downloadFolder.value = folder
 
-            # 更新卡片内容
             self.download_dir_card.setContent(folder)
 
             # 保存配置
