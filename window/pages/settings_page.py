@@ -1,21 +1,13 @@
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QFileDialog
+from PySide6.QtWidgets import QWidget, QFileDialog
 from qfluentwidgets import (
-    ComboBoxSettingCard,
-    HyperlinkCard,
-    PushSettingCard,
-    FluentIcon,
-    SettingCardGroup,
     OptionsConfigItem,
     OptionsValidator,
     qconfig,
     QConfig,
     Theme,
     setTheme,
-    FluentStyleSheet,
     ConfigItem,
 )
-import json
-import os
 from components.app_settings import settings_ui
 
 
