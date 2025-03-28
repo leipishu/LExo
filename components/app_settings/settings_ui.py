@@ -21,7 +21,8 @@ def setup_ui(self):
     self.layout.setSpacing(15)
 
     # 创建设置卡片组
-    self.setting_group = SettingCardGroup("常规设置", self)
+    self.theme_group = SettingCardGroup("主题设置", self)
+    self.setting_group = SettingCardGroup("LExo设置", self)
 
     # 主题设置卡片
     self.theme_card = ComboBoxSettingCard(
@@ -29,9 +30,9 @@ def setup_ui(self):
         icon=FluentIcon.BRUSH,
         title="应用主题",
         content="调整你的应用外观",
-        texts=["Light", "Dark", "Auto"],  # 保持与 validator 的选项一致
+        texts=["浅色", "深色", "自动"],  # 修改为中文文本
     )
-    self.setting_group.addSettingCard(self.theme_card)
+    self.theme_group.addSettingCard(self.theme_card)
 
     # 文件夹选择卡片
     self.download_dir_card = PushSettingCard(
@@ -77,6 +78,7 @@ def setup_ui(self):
 
     # 将设置卡片组添加到布局
     self.layout.addWidget(self.setting_group)
+    self.layout.addWidget(self.theme_group)
     self.layout.addWidget(self.report_group)
 
     # 伸展布局，使组件居中显示
@@ -91,11 +93,19 @@ def setup_ui(self):
         with open(config_path, 'r', encoding='utf-8') as file:
             config_data = json.load(file)
             theme_mode_str = config_data.get("QFluentWidgets", {}).get("ThemeMode", "LIGHT")
-            if theme_mode_str.upper() == "DARK":
-                initial_theme_index = 1
-            elif theme_mode_str.upper() == "AUTO":
-                initial_theme_index = 2
-            else:
-                initial_theme_index = 0
+            # 增加英文到中文的映射
+            theme_map = {"LIGHT": 0, "DARK": 1, "AUTO": 2}
+            initial_theme_index = theme_map.get(theme_mode_str.upper(), 0)
             self.theme_card.comboBox.setCurrentIndex(initial_theme_index)
             setTheme(self.cfg.themeMode.value)
+
+
+def theme_text_to_enum(text):
+    # 将中文文本映射回 Theme 枚举类型
+    if text == "浅色":
+        return Theme.LIGHT
+    elif text == "深色":
+        return Theme.DARK
+    elif text == "自动":
+        return Theme.AUTO
+    return Theme.LIGHT  # 默认值
