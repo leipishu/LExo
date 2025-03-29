@@ -32,7 +32,7 @@ class MainWindow(FluentWindow):
         # 窗口设置
         self.setWindowTitle("LExo")
         self.setWindowIcon(QIcon('./resources/img/App_Icon.png'))
-        self.resize(1200, 800)
+        self.resize(1300,900)
 
     def setupTheme(self, theme):
         """设置主题"""

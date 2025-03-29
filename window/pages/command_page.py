@@ -120,9 +120,9 @@ class CommandPage(QWidget):
             parent=self
         )
 
-    def on_install_nodejs_clicked(self):
-
-        QDesktopServices.openUrl(QUrl("https://nodejs.org/zh-cn/download/"))
-
-    def on_install_hexo_clicked(self):
-        pass
+    # def on_install_nodejs_clicked(self):
+    #
+    #     QDesktopServices.openUrl(QUrl("https://nodejs.org/zh-cn/download/"))
+    #
+    # def on_install_hexo_clicked(self):
+    #     pass
