@@ -77,15 +77,4 @@ def create_basic_commands_section(parent):
         deploy_btn
     )
 
-    # 6. 初始化组
-    init_btn = PushButton(FIF.PLAY, "初始化", card)
-    init_btn.setMaximumHeight(max_height)
-    init_btn.clicked.connect(parent.on_init_clicked)
-    card.addGroup(
-        FIF.ADD,
-        "初始化",
-        "初始化项目",
-        init_btn
-    )
-
     return card

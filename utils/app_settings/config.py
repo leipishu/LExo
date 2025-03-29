@@ -8,6 +8,7 @@ from qfluentwidgets import (
     Theme,
     ConfigItem,
 )
+import os
 
 
 # 定义配置类
@@ -24,7 +25,7 @@ class Config(QConfig):
     downloadFolder = ConfigItem(
         group="App",
         name="DownloadFolder",
-        default="D:/Users/下载",
+        default=os.path.join(os.getcwd(), "app", "sites"),  # 动态获取当前工作目录
     )
 
     packageMgr = OptionsConfigItem(

@@ -4,6 +4,7 @@ from PySide6.QtGui import QDesktopServices
 from qfluentwidgets import GroupHeaderCardWidget, PrimaryPushButton, PushButton, LineEdit, InfoBar, InfoBarPosition, FluentIcon as FIF, ScrollArea
 from components.hx_command.basic_commands import create_basic_commands_section
 from components.hx_command.install_commands import create_install_commands_section
+from components.hx_command.init_commands import create_init_commands_section
 
 class CommandPage(QWidget):
     def __init__(self, parent=None):
@@ -32,7 +33,9 @@ class CommandPage(QWidget):
         # 创建基础指令卡片
         self.basic_commands_card = create_basic_commands_section(self)
         self.install_commands_card = create_install_commands_section(self)
+        self.init_commands_card = create_init_commands_section(self)
         self.content_layout.addWidget(self.install_commands_card)
+        self.content_layout.addWidget(self.init_commands_card)
         self.content_layout.addWidget(self.basic_commands_card)
 
 
@@ -110,19 +113,27 @@ class CommandPage(QWidget):
 
     def on_init_clicked(self):
         """初始化按钮点击事件"""
-        InfoBar.info(
-            title='初始化',
-            content="初始化操作已执行。",
-            orient=Qt.Horizontal,
-            isClosable=True,
-            position=InfoBarPosition.TOP_RIGHT,
-            duration=2000,
-            parent=self
-        )
+        if self.init_line_edit.text():
+            InfoBar.info(
+                title='初始化',
+                content="初始化操作已执行。",
+                orient=Qt.Horizontal,
+                isClosable=True,
+                position=InfoBarPosition.TOP_RIGHT,
+                duration=2000,
+                parent=self
+            )
+        else:
+            InfoBar.warning(
+                title='初始化',
+                content="请输入博客名称",
+                orient=Qt.Horizontal,
+                isClosable=True,
+                position=InfoBarPosition.TOP_RIGHT,
+                duration=2000,
+                parent=self
+            )
 
-    # def on_install_nodejs_clicked(self):
-    #
-    #     QDesktopServices.openUrl(QUrl("https://nodejs.org/zh-cn/download/"))
-    #
-    # def on_install_hexo_clicked(self):
-    #     pass
+    def on_emergency_btn_clicked(self):
+        pass
+
