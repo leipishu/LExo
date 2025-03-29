@@ -1,5 +1,6 @@
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QUrl
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QHBoxLayout, QLineEdit
+from PySide6.QtGui import QDesktopServices
 from qfluentwidgets import GroupHeaderCardWidget, PrimaryPushButton, PushButton, LineEdit, InfoBar, InfoBarPosition, FluentIcon as FIF, ScrollArea
 from components.hx_command.basic_commands import create_basic_commands_section
 from components.hx_command.install_commands import create_install_commands_section
@@ -120,6 +121,8 @@ class CommandPage(QWidget):
         )
 
     def on_install_nodejs_clicked(self):
-        pass
+
+        QDesktopServices.openUrl(QUrl("https://nodejs.org/zh-cn/download/"))
+
     def on_install_hexo_clicked(self):
         pass

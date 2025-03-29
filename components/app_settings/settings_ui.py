@@ -43,6 +43,15 @@ def setup_ui(self):
     )
     self.setting_group.addSettingCard(self.download_dir_card)
 
+    self.package_mgr_card = ComboBoxSettingCard(
+        configItem=self.cfg.packageMgr,
+        icon=FluentIcon.DEVELOPER_TOOLS,
+        title="Nods.js 包管理器",
+        content="调整你的应用的包管理器(镜像源需自行设置)",
+        texts=["npm", "cnpm", "pnpm"]
+    )
+    self.setting_group.addSettingCard(self.package_mgr_card)
+
     # 关于与反馈卡片组
     self.report_group = SettingCardGroup("关于与反馈", self)
 

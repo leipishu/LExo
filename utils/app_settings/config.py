@@ -22,9 +22,17 @@ class Config(QConfig):
     )
     # 下载目录配置项
     downloadFolder = ConfigItem(
-        group="Paths",
+        group="App",
         name="DownloadFolder",
         default="D:/Users/下载",
+    )
+
+    packageMgr = OptionsConfigItem(
+        group="App",
+        name="PackageMgr",
+        default="npm",
+        validator=OptionsValidator(["npm", "cnpm", "pnpm"]),
+        restart=True,
     )
 
     def toDict(self):
