@@ -8,7 +8,8 @@ from qfluentwidgets import (
     SettingCardGroup,
     FluentStyleSheet,
     setTheme,
-    Theme
+    Theme,
+    SwitchSettingCard,
 )
 import json
 import os
@@ -51,6 +52,14 @@ def setup_ui(self):
         texts=["npm", "cnpm", "pnpm"]
     )
     self.setting_group.addSettingCard(self.package_mgr_card)
+
+    self.enable_install_card = SwitchSettingCard(
+        icon=FluentIcon.TRANSPARENT,
+        title="显示安装卡片",
+        content="是否显示命令页面中的安装卡片",
+        configItem=self.cfg.enableInstallCard,
+    )
+    self.setting_group.addSettingCard(self.enable_install_card)
 
     # 关于与反馈卡片组
     self.report_group = SettingCardGroup("关于与反馈", self)

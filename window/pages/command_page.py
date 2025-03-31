@@ -5,6 +5,7 @@ from qfluentwidgets import GroupHeaderCardWidget, PrimaryPushButton, PushButton,
 from components.hx_command.basic_commands import create_basic_commands_section
 from components.hx_command.install_commands import create_install_commands_section
 from components.hx_command.init_commands import create_init_commands_section
+from utils.app_settings.config import cfg
 
 class CommandPage(QWidget):
     def __init__(self, parent=None):
@@ -32,9 +33,10 @@ class CommandPage(QWidget):
 
         # 创建基础指令卡片
         self.basic_commands_card = create_basic_commands_section(self)
-        self.install_commands_card = create_install_commands_section(self)
         self.init_commands_card = create_init_commands_section(self)
-        self.content_layout.addWidget(self.install_commands_card)
+        if cfg.get(cfg.enableInstallCard):
+            self.install_commands_card = create_install_commands_section(self)
+            self.content_layout.addWidget(self.install_commands_card)
         self.content_layout.addWidget(self.init_commands_card)
         self.content_layout.addWidget(self.basic_commands_card)
 

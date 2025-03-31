@@ -1,6 +1,7 @@
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QWidget, QHBoxLayout
 from qfluentwidgets import GroupHeaderCardWidget, PrimaryPushButton, PushButton, LineEdit, FluentIcon as FIF
+from utils.hx_command.run_init_commands import on_init_clicked
 
 def create_init_commands_section(parent):
     """创建添加博客部分(独立组件)"""
@@ -15,7 +16,7 @@ def create_init_commands_section(parent):
     # 1. hexo三连组
     init_btn = PrimaryPushButton(FIF.PLAY_SOLID, "开始初始化", init_card)
     init_btn.setMaximumHeight(max_height)
-    init_btn.clicked.connect(parent.on_init_clicked)
+    init_btn.clicked.connect(lambda: on_init_clicked(parent))
     init_card.addGroup(
         FIF.ADD,
         "初始化",

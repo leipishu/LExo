@@ -7,6 +7,7 @@ from qfluentwidgets import (
     QConfig,
     Theme,
     ConfigItem,
+    BoolValidator,
 )
 import os
 
@@ -34,6 +35,13 @@ class Config(QConfig):
         default="npm",
         validator=OptionsValidator(["npm", "cnpm", "pnpm"]),
         restart=True,
+    )
+
+    enableInstallCard = ConfigItem(
+        "App",
+        "EnableInstallCard",
+        True,
+        BoolValidator()
     )
 
     def toDict(self):
