@@ -12,10 +12,10 @@ from qfluentwidgets import (
     PushButton,
     TransparentToolButton,
     FluentIcon as FIF,
-    MessageBoxBase,
+    MessageBox,
 )
 from datetime import datetime
-from components.editor.add_msg_box import AddMsgBox
+from components.editor.msg_box import AddMsgBox, DeleteMsgBox
 
 class FrontmatterManager:
     def __init__(self):
@@ -105,7 +105,6 @@ class FrontmatterManager:
 
     def show_add_tag_dialog(self):
         """显示添加标签对话框"""
-        # 获取当前活动窗口作为父窗口
         active_window = QApplication.activeWindow()
         dialog = AddMsgBox(active_window)
         tag_name = dialog.exec()
@@ -128,6 +127,7 @@ class FrontmatterManager:
         # 添加新的 TagButton
         for tag in self.tags:
             tag_button = PushButton(tag)
+            tag_button.clicked.connect(lambda checked, t=tag: self.show_delete_tag_dialog(t))
             self.flow_layout.addWidget(tag_button)
             self.tag_buttons.append(tag_button)
 
@@ -135,6 +135,13 @@ class FrontmatterManager:
         if self.add_button.parent() == self.flow_layout_card:
             self.flow_layout.removeWidget(self.add_button)
         self.flow_layout.addWidget(self.add_button)
+
+    def show_delete_tag_dialog(self, tag):
+        """显示删除标签对话框"""
+        active_window = QApplication.activeWindow()
+        dialog = DeleteMsgBox(tag, active_window)
+        if dialog.exec():
+            self.remove_tag(tag)
 
     def remove_tag(self, tag):
         """移除一个 tag"""
@@ -206,6 +213,3 @@ class FrontmatterManager:
 
         # 额外控制 CardWidget 的可见性
         self.card_widget.setVisible(self.is_visible)
-
-    def on_add_button_clicked(self):
-        pass

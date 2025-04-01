@@ -3,6 +3,7 @@ from qfluentwidgets import (
     LineEdit,
     BodyLabel,
     MessageBoxBase,
+    MessageBox
 )
 from datetime import datetime
 
@@ -16,6 +17,8 @@ class AddMsgBox(MessageBoxBase):
         self.tag_input = LineEdit()
         self.tag_input.setPlaceholderText("请输入标签名称")
         self.tag_input.setClearButtonEnabled(True)
+        self.yesButton.setText("添加")
+        self.cancelButton.setText("取消")
 
         # 创建布局
         self.viewLayout.addWidget(BodyLabel('添加新标签'))
@@ -52,3 +55,17 @@ class AddMsgBox(MessageBoxBase):
         """执行对话框并验证输入"""
         super().exec()
         return self.tag_input.text().strip() if self.validate() else None
+
+class DeleteMsgBox(MessageBox):
+    """自定义对话框，用于确认删除标签"""
+    def __init__(self, tag_name, parent=None):
+        super().__init__(
+            title="删除标签",
+            content=f"确定要删除标签 '{tag_name}' 吗？",
+            parent=parent
+        )
+        self.tag_name = tag_name
+
+        # 修改按钮文本
+        self.yesButton.setText("删除")
+        self.cancelButton.setText("取消")
