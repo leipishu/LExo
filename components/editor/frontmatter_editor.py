@@ -1,8 +1,67 @@
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit
-from PySide6.QtCore import QDate, QTime
-from qfluentwidgets import ScrollArea, PlainTextEdit, LineEdit, CardWidget, BodyLabel, DatePicker, TimePicker
-import re
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QApplication
+from PySide6.QtCore import Qt, QTime, QDate
+from qfluentwidgets import (
+    ScrollArea,
+    PlainTextEdit,
+    LineEdit,
+    CardWidget,
+    BodyLabel,
+    DatePicker,
+    TimePicker,
+    FlowLayout,
+    PushButton,
+    TransparentToolButton,
+    FluentIcon as FIF,
+    MessageBoxBase,
+)
 from datetime import datetime
+
+class AddMsgBox(MessageBoxBase):
+    """自定义对话框，用于输入标签名称"""
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("添加标签")
+
+        # 创建输入框
+        self.tag_input = LineEdit()
+        self.tag_input.setPlaceholderText("请输入标签名称")
+        self.tag_input.setClearButtonEnabled(True)
+
+        # 创建布局
+        self.viewLayout.addWidget(BodyLabel('添加新标签'))
+        self.viewLayout.addWidget(self.tag_input)
+
+        # 添加按钮布局
+        button_layout = QHBoxLayout()
+        self.viewLayout.addLayout(button_layout)
+
+        # 设置对话框的最小宽度
+        self.widget.setMinimumWidth(350)
+        self.warningLabel = None  # 用于存储警告标签
+
+    def validate(self):
+        """ Validate the input data """
+        tag_name = self.tag_input.text().strip()
+        if not tag_name:
+            # 检查是否已经存在警告标签
+            if self.warningLabel is None:
+                self.warningLabel = QLabel("标签名称不能为空")
+                self.warningLabel.setStyleSheet("color: red")
+                self.viewLayout.addWidget(self.warningLabel)
+            else:
+                # 如果已经存在，确保它可见
+                self.warningLabel.setVisible(True)
+            return False
+        else:
+            # 如果输入有效，隐藏警告标签（如果存在）
+            if self.warningLabel is not None:
+                self.warningLabel.setVisible(False)
+        return True
+
+    def exec(self):
+        """执行对话框并验证输入"""
+        super().exec()
+        return self.tag_input.text().strip() if self.validate() else None
 
 class FrontmatterManager:
     def __init__(self):
@@ -14,6 +73,11 @@ class FrontmatterManager:
         self.date_label = BodyLabel("date")
         self.date_picker = DatePicker()
         self.time_picker = TimePicker(showSeconds=True)
+        self.tags = []  # 存储 tags
+        self.tag_buttons = []  # 存储 TagButton 实例
+        self.flow_layout = None  # FlowLayout 实例
+        self.flow_layout_card = None  # FlowLayout 的 CardWidget
+        self.add_button = None  # 添加标签的按钮
 
     def create_editor_area(self, parent):
         # 创建 CardWidget 容器
@@ -60,6 +124,20 @@ class FrontmatterManager:
         # 将标题和日期时间添加到主布局
         layout.addLayout(header_layout)
 
+        # 创建 FlowLayout 的 CardWidget
+        self.flow_layout_card = CardWidget()
+        self.flow_layout = FlowLayout(self.flow_layout_card)
+        self.flow_layout.setContentsMargins(10, 10, 10, 10)
+        self.flow_layout.setSpacing(10)
+
+        # 添加添加标签的按钮
+        self.add_button = TransparentToolButton(FIF.ADD)
+        self.add_button.clicked.connect(self.show_add_tag_dialog)
+        self.flow_layout.addWidget(self.add_button)
+
+        # 将 FlowLayout 的 CardWidget 添加到主布局
+        layout.addWidget(self.flow_layout_card)
+
         # 其他 frontmatter 内容
         layout.addWidget(self.editor)
 
@@ -71,7 +149,54 @@ class FrontmatterManager:
 
         return self.card_widget  # 返回 CardWidget 作为编辑区域的最外层容器
 
-    def set_content(self, frontmatter_without_title_and_date, title, date):
+    def show_add_tag_dialog(self):
+        """显示添加标签对话框"""
+        # 获取当前活动窗口作为父窗口
+        active_window = QApplication.activeWindow()
+        dialog = AddMsgBox(active_window)
+        tag_name = dialog.exec()
+        if tag_name:
+            self.add_tag(tag_name)
+
+    def add_tag(self, tag_name):
+        """添加一个 tag"""
+        if tag_name not in self.tags:
+            self.tags.append(tag_name)
+            self.update_flow_layout()
+
+    def update_flow_layout(self):
+        """更新 FlowLayout 中的 tags"""
+        # 清空现有的 TagButton
+        for button in self.tag_buttons:
+            button.deleteLater()
+        self.tag_buttons.clear()
+
+        # 添加新的 TagButton
+        for tag in self.tags:
+            tag_button = PushButton(tag)
+            self.flow_layout.addWidget(tag_button)
+            self.tag_buttons.append(tag_button)
+
+        # 重新添加添加标签的按钮
+        if self.add_button.parent() == self.flow_layout_card:
+            self.flow_layout.removeWidget(self.add_button)
+        self.flow_layout.addWidget(self.add_button)
+
+    def remove_tag(self, tag):
+        """移除一个 tag"""
+        if tag in self.tags:
+            self.tags.remove(tag)
+            self.update_flow_layout()
+
+    def clear_content(self):
+        self.editor.setPlainText("")
+        self.title_editor.setText("")
+        self.date_picker.setDate(QDate.currentDate())
+        self.time_picker.setTime(QTime.currentTime())
+        self.tags = []
+        self.update_flow_layout()
+
+    def set_content(self, frontmatter_without_title_and_date, title, date, tags=None):
         # 设置 title
         self.title_editor.setText(title)
         # 设置 date 和 time
@@ -84,12 +209,10 @@ class FrontmatterManager:
                 pass
         # 设置 frontmatter 中除 title 和 date 之外的其他内容
         self.editor.setPlainText(frontmatter_without_title_and_date.strip())
-
-    def clear_content(self):
-        self.editor.setPlainText("")
-        self.title_editor.setText("")
-        self.date_picker.setDate(QDate.currentDate())
-        self.time_picker.setTime(QTime.currentTime())
+        # 设置 tags
+        if tags:
+            self.tags = tags
+            self.update_flow_layout()
 
     def get_content(self):
         title = self.title_editor.text().strip()
@@ -109,10 +232,14 @@ class FrontmatterManager:
             combined_frontmatter.append(f"title: {title}")
         if date_str and time_str:
             combined_frontmatter.append(f"date: {date_str} {time_str}")
+        if self.tags:
+            # 将 tags 转换为列表格式
+            tags_str = "\n".join([f"    - {tag}" for tag in self.tags])
+            combined_frontmatter.append(f"\ntags:\n{tags_str}")
         if frontmatter:
             combined_frontmatter.append(frontmatter)
 
-        return f"---\n{'\n'.join(combined_frontmatter)}\n---\n"
+        return f"---\n{''.join(combined_frontmatter)}\n---\n"
 
     def toggle_visibility(self, force=None):
         if force is not None:
@@ -125,3 +252,6 @@ class FrontmatterManager:
 
         # 额外控制 CardWidget 的可见性
         self.card_widget.setVisible(self.is_visible)
+
+    def on_add_button_clicked(self):
+        pass

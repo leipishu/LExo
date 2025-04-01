@@ -3,6 +3,11 @@ from PySide6.QtCore import Qt
 from qfluentwidgets import InfoBar, InfoBarPosition, InfoBarIcon
 import re
 from pathlib import Path
+from ruamel.yaml import YAML
+
+import re
+from ruamel.yaml import YAML
+from io import StringIO
 
 def extract_frontmatter(content):
     """提取frontmatter内容和正文"""
@@ -11,16 +16,52 @@ def extract_frontmatter(content):
     if match:
         frontmatter = match.group(1).strip()
         body = match.group(2).strip()
-        # 提取 title 和 date
-        title_match = re.search(r'^title:\s*(.*)$', frontmatter, re.MULTILINE)
-        date_match = re.search(r'^date:\s*(.*)$', frontmatter, re.MULTILINE)
-        title = title_match.group(1).strip() if title_match else ""
-        date = date_match.group(1).strip() if date_match else ""
-        # 移除 title 和 date 部分
-        frontmatter_without_title_and_date = re.sub(r'^title:\s*(.*)\n', '', frontmatter, flags=re.MULTILINE)
-        frontmatter_without_title_and_date = re.sub(r'^date:\s*(.*)\n', '', frontmatter_without_title_and_date, flags=re.MULTILINE)
-        return frontmatter_without_title_and_date, title, date, body
-    return None, "", "", content
+
+        # 使用 ruamel.yaml 解析 frontmatter
+        yaml = YAML()
+        yaml.preserve_quotes = True
+        yaml.indent(mapping=2, sequence=4, offset=2)
+        try:
+            frontmatter_data = yaml.load(frontmatter)
+        except Exception as e:
+            frontmatter_data = {}
+
+        # 提取 title
+        title = frontmatter_data.get('title', "").strip() if isinstance(frontmatter_data.get('title'), str) else ""
+
+        # 提取 date
+        date = frontmatter_data.get('date', "").strip() if isinstance(frontmatter_data.get('date'), str) else ""
+
+        # 提取 tags
+        tags = []
+        if 'tags' in frontmatter_data:
+            tags_data = frontmatter_data['tags']
+            if isinstance(tags_data, list):
+                tags = [str(tag).strip() for tag in tags_data]
+            elif isinstance(tags_data, str):
+                # 处理逗号分隔的字符串
+                tags = [tag.strip() for tag in tags_data.split(',') if tag.strip()]
+            else:
+                # 其他格式统一转换为字符串处理
+                tags = [str(tags_data).strip()]
+
+        # 移除 title、date 和 tags 部分
+        if 'title' in frontmatter_data:
+            del frontmatter_data['title']
+        if 'date' in frontmatter_data:
+            del frontmatter_data['date']
+        if 'tags' in frontmatter_data:
+            del frontmatter_data['tags']
+
+        # 将修改后的 frontmatter 转换回字符串
+        stream = StringIO()
+        yaml.dump(frontmatter_data, stream)
+        frontmatter_without_title_and_date = stream.getvalue()
+
+        return frontmatter_without_title_and_date, title, date, body, tags
+    else:
+        # 如果没有 frontmatter 区域，直接返回原始内容
+        return "", "", "", content, []
 
 def open_markdown_file(parent, editor, editor_page):
     path, _ = QFileDialog.getOpenFileName(
@@ -30,14 +71,14 @@ def open_markdown_file(parent, editor, editor_page):
             full_content = f.read()
 
         # 解析 frontmatter 和正文
-        frontmatter, title, date, body = extract_frontmatter(full_content)
+        frontmatter, title, date, body, tags = extract_frontmatter(full_content)
 
         # 设置主编辑器的内容
         editor.setPlainText(body)
 
         # 设置 frontmatter 管理器的内容
-        if frontmatter or title or date:
-            editor_page.frontmatter_manager.set_content(frontmatter, title, date)
+        if frontmatter or title or date or tags:
+            editor_page.frontmatter_manager.set_content(frontmatter, title, date, tags)
             editor_page.frontmatter_manager.toggle_visibility(True)  # 显示 frontmatter 区域
         else:
             editor_page.frontmatter_manager.clear_content()  # 清空 frontmatter 区域
