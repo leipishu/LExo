@@ -1,0 +1,35 @@
+name: "优化提交"
+description: "如果你觉得某个功能或优化可以提升用户体验，请向开发者反馈"
+title: "优化反馈: "
+labels:
+  - "enhancement | 优化"
+  - "new issue | 新提交"
+assignees:
+  - "leipishu"
+body:
+  - type: checkboxes
+    id: check
+    attributes:
+      label: "检查项"
+      description: "提交issue前请先确保以下检查项"
+      options:
+        - label: "我已检查，在issues界面该优化未被提及"
+          required: true
+        - label: "我已检查，该优化可以实现"
+          required: false
+  - type: textarea
+    id: explain
+    attributes:
+      label: "简要描述你的优化"
+      description: "说明具体内容等"
+      placeholder: "在这里介绍你所说的内容"
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: "提出原因"
+      description: "解释你为什么想要这个优化"
+      placeholder: "在这里解释为什么需要这个优化"
+    validations:
+      required: true

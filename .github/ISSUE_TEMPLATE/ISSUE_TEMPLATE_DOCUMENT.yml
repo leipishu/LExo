@@ -1,0 +1,33 @@
+name: "文档更新提交"
+description: "如果你发现如README等文件中存在过时或错误的内容，或是有任何疑问或建议，请向开发者反馈"
+title: "新功能反馈: "
+labels:
+  - "documentation | 文档修改"
+  - "new issue | 新提交"
+assignees:
+  - "leipishu"
+body:
+  - type: checkboxes
+    id: check
+    attributes:
+      label: "检查项"
+      description: "提交issue前请先确保以下检查项"
+      options:
+        - label: "我已检查，在issues界面该文档更新未被提及"
+          required: true
+  - type: textarea
+    id: explain
+    attributes:
+      label: "简要描述文档中的问题"
+      description: "说明具体有问题内容等"
+      placeholder: "在这里介绍你所说的内容"
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: "解决方案或建议"
+      description: "大致描述你期望更改后的内容"
+      placeholder: "在这里解释为什么需要这个修改，建议指向某一次commit或PR方便开发者进行评估"
+    validations:
+      required: true

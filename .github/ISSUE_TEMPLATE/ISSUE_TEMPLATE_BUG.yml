@@ -1,0 +1,35 @@
+name: "BUG反馈"
+description: "如果应用存在bug，请反馈"
+title: "BUG反馈: "
+labels:
+  - "bug | 漏洞"
+  - "new issue | 新提交"
+assignees:
+  - "leipishu"
+body:
+  - type: checkboxes
+    id: check
+    attributes:
+      label: "检查项"
+      description: "提交issue前请先确保以下检查项"
+      options:
+        - label: "我已检查，在issues界面该bug未被提及"
+          required: true
+        - label: "我已检查，该bug不是由第三方库导致的"
+          required: true
+  - type: textarea
+    id: explain
+    attributes:
+      label: "简要描述该bug"
+      description: "说明具体内容等."
+      placeholder: "在这里介绍你所说的内容"
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: "复现方法"
+      description: "简要描述如何复现该bug"
+      placeholder: "在这里描述如何复现该bug"
+    validations:
+      required: true

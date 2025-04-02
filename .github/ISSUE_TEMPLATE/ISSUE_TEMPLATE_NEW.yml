@@ -1,0 +1,35 @@
+name: "新功能提交"
+description: "如果你对应用有任何新功能的建议或想法，请在可以向开发者反馈"
+title: "新功能反馈: "
+labels:
+  - "new feature | 新功能"
+  - "new issue | 新提交"
+assignees:
+  - "leipishu"
+body:
+  - type: checkboxes
+    id: check
+    attributes:
+      label: "检查项"
+      description: "提交issue前请先确保以下检查项"
+      options:
+        - label: "我已检查，在issues界面该新功能未被提及"
+          required: true
+        - label: "我已检查，该新功能可以实现"
+          required: false
+  - type: textarea
+    id: explain
+    attributes:
+      label: "简要描述你的新功能"
+      description: "说明具体内容等"
+      placeholder: "在这里介绍你所说的内容"
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: "提出原因"
+      description: "解释你为什么想要这个新功能"
+      placeholder: "在这里解释为什么需要这个新功能"
+    validations:
+      required: true
