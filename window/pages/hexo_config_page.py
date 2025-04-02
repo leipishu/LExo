@@ -167,23 +167,38 @@ class HexoConfigPage(QWidget):
         if self.file_path:
             # 检查键是否存在
             if self._key_exists(key, self.yaml_data):
-                # 删除键
-                self._delete_key(key, self.yaml_data)
-                # 从 display_data 中删除对应的键
-                if key in self.display_data:
-                    del self.display_data[key]
-                # 刷新界面
-                self.clear_text_edits()
-                add_yaml_section(self.yaml_data, self.scroll_layout, self.display_data, None, self)
-                InfoBar.success(
-                    title='删除成功',
-                    content=f"条目 '{key}' 已成功删除。",
-                    orient=Qt.Horizontal,
-                    isClosable=True,
-                    position=InfoBarPosition.TOP_RIGHT,
-                    duration=2000,
+                # 创建MessageBox弹窗
+                w = MessageBox(
+                    title="确认删除",
+                    content=f"确定要删除条目 '{key}' 吗？",
                     parent=self
                 )
+                w.yesButton.setText("删除")
+                w.cancelButton.setText("取消")
+
+                # 连接信号槽
+                def confirm_delete():
+                    # 删除键
+                    self._delete_key(key, self.yaml_data)
+                    # 从 display_data 中删除对应的键
+                    if key in self.display_data:
+                        del self.display_data[key]
+                    # 刷新界面
+                    self.clear_text_edits()
+                    add_yaml_section(self.yaml_data, self.scroll_layout, self.display_data, None, self)
+                    # 显示删除成功的消息
+                    InfoBar.success(
+                        title='删除成功',
+                        content=f"条目 '{key}' 已成功删除。",
+                        orient=Qt.Horizontal,
+                        isClosable=True,
+                        position=InfoBarPosition.TOP_RIGHT,
+                        duration=2000,
+                        parent=self
+                    )
+
+                w.yesButton.clicked.connect(confirm_delete)
+                w.exec_()
             else:
                 InfoBar.warning(
                     title='条目不存在',
@@ -204,7 +219,6 @@ class HexoConfigPage(QWidget):
                 duration=2000,
                 parent=self
             )
-
     def _key_exists(self, key, data):
         """检查键是否存在"""
         if '.' in key:
