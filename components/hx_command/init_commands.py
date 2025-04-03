@@ -1,7 +1,7 @@
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QWidget, QHBoxLayout
 from qfluentwidgets import GroupHeaderCardWidget, PrimaryPushButton, PushButton, LineEdit, FluentIcon as FIF
-from utils.hx_command.run_init_commands import on_init_clicked
+from utils.hx_command.run_init_commands import on_init_clicked, on_emergency_clicked
 
 def create_init_commands_section(parent):
     """创建添加博客部分(独立组件)"""
@@ -35,7 +35,7 @@ def create_init_commands_section(parent):
 
     init_emergency_btn = PushButton("急救包", init_card)
     init_emergency_btn.setMaximumHeight(max_height)
-    init_emergency_btn.clicked.connect(parent.on_emergency_btn_clicked)
+    init_emergency_btn.clicked.connect(lambda: on_emergency_clicked(parent))
     init_card.addGroup(
         FIF.EMOJI_TAB_SYMBOLS,
         "急救包",
