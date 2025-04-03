@@ -131,3 +131,6 @@ dmypy.json
 /releases
 
 /app
+
+Pipfile
+Pipfile.lock
