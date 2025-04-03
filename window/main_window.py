@@ -4,7 +4,6 @@ from qfluentwidgets import FluentWindow, NavigationItemPosition, Theme, setTheme
 from qfluentwidgets import FluentIcon as FIF
 
 from window.pages.editor_page import MarkdownEditorPage
-from window.pages.about_page import AboutPage
 from window.pages.hexo_config_page import HexoConfigPage
 from window.pages.command_page import CommandPage
 from window.pages.settings_page import SettingsPage
@@ -15,18 +14,15 @@ class MainWindow(FluentWindow):
 
         # 创建编辑器页面
         self.editor_page = MarkdownEditorPage(self)
-        self.about_page = AboutPage(self)
         self.config_page = HexoConfigPage(self)
         self.command_page = CommandPage(self)
         self.settings_page = SettingsPage(self)
         self.editor_page.setObjectName("MD_Editor")
-        self.about_page.setObjectName("About")
         self.config_page.setObjectName("Config")
         self.command_page.setObjectName("Command")
         self.settings_page.setObjectName("Settings")
 
         # 初始化导航栏
-        # self.setupTheme(Theme.LIGHT)
         self.initNavigation()
 
         # 窗口设置
@@ -61,12 +57,6 @@ class MainWindow(FluentWindow):
             position=NavigationItemPosition.TOP
         )
 
-        self.addSubInterface(
-            interface=self.about_page,
-            icon=FIF.INFO,  # 使用内置图标
-            text="关于",
-            position=NavigationItemPosition.BOTTOM
-        )
         self.addSubInterface(
             interface=self.settings_page,
             icon=FIF.SETTING,  # 使用内置图标

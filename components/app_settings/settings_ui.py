@@ -94,6 +94,15 @@ def setup_ui(self):
     )
     self.report_group.addSettingCard(self.pr_card)
 
+    self.about_card = HyperlinkCard(
+        url="https://github.com/leipishu/LExo",
+        text="转到Github仓库",
+        icon=FluentIcon.INFO,
+        title="关于",
+        content="©版权所有 2025 Leipishu. 当前版本 indev-2.0 ",
+    )
+    self.report_group.addSettingCard(self.about_card)
+
     # 将设置卡片组添加到布局
     self.layout.addWidget(self.setting_group)
     self.layout.addWidget(self.theme_group)

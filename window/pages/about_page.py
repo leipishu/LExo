@@ -1,3 +1,7 @@
+#########################
+# Abandoned due to lack of maintenance and bad design.
+#########################
+
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton
 from qfluentwidgets import TitleLabel, CaptionLabel, BodyLabel, HyperlinkButton, FluentIcon, LargeTitleLabel,SubtitleLabel, StrongBodyLabel
 from PySide6.QtGui import QPixmap
