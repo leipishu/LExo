@@ -135,7 +135,3 @@ class CommandPage(QWidget):
                 duration=2000,
                 parent=self
             )
-
-    def on_emergency_btn_clicked(self):
-        pass
-
