@@ -79,11 +79,14 @@ def create_basic_commands_section(parent):
     parent.service_btn = PushButton(FIF.PLAY, "启动", card)
     parent.service_btn.setMaximumHeight(max_height)
     parent.service_btn.clicked.connect(lambda: local_service_clicked(parent))
+    parent.stop_service_btn = PushButton(FIF.PAUSE, "停止", card)
+    parent.stop_service_btn.setMaximumHeight(max_height)
     parent.service_edit = LineEdit(card)
     parent.service_edit.setMaximumHeight(max_height)
     parent.service_edit.setPlaceholderText("输入端口")
 
     service_layout.addWidget(parent.service_btn)
+    service_layout.addWidget(parent.stop_service_btn)
     service_layout.addWidget(parent.service_edit)
     card.addGroup(
         FIF.PROJECTOR,
