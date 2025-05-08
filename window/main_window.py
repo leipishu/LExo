@@ -7,6 +7,7 @@ from window.pages.editor_page import MarkdownEditorPage
 from window.pages.hexo_config_page import HexoConfigPage
 from window.pages.command_page import CommandPage
 from window.pages.settings_page import SettingsPage
+from window.pages.blog_mgr_page import BlogMgrPage
 
 class MainWindow(FluentWindow):
     def __init__(self):
@@ -17,10 +18,12 @@ class MainWindow(FluentWindow):
         self.config_page = HexoConfigPage(self)
         self.command_page = CommandPage(self)
         self.settings_page = SettingsPage(self)
+        self.blog_mgr_page = BlogMgrPage(self)
         self.editor_page.setObjectName("MD_Editor")
         self.config_page.setObjectName("Config")
         self.command_page.setObjectName("Command")
         self.settings_page.setObjectName("Settings")
+        self.blog_mgr_page.setObjectName("Blog")
 
         # 初始化导航栏
         self.initNavigation()
@@ -47,6 +50,13 @@ class MainWindow(FluentWindow):
             interface=self.config_page,
             icon=FIF.GLOBE,  # 使用内置图标
             text="Hexo 配置",
+            position=NavigationItemPosition.TOP
+        )
+
+        self.addSubInterface(
+            interface=self.blog_mgr_page,
+            icon=FIF.DOCUMENT,  # 使用内置图标
+            text="博客管理",
             position=NavigationItemPosition.TOP
         )
 
