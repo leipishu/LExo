@@ -9,6 +9,7 @@ from components.editor.line_number import LineNumberEditor
 from components.editor.preview_panel import PreviewPanel
 from components.editor.toolbar_manager import ToolbarManager
 from components.editor.frontmatter_editor import FrontmatterManager
+from components.editor.markdown_highlighter import MarkdownHighlighter
 
 from utils.editor.file_mgr import *
 from utils.editor.text_edit import *
@@ -57,6 +58,9 @@ class MarkdownEditorPage(QWidget, PreviewPanel, ToolbarManager):
         # 将CardWidget添加到主布局中
         self.layout.addWidget(toolbar_card)
         self.layout.addWidget(self.main_container)
+
+        # 应用 Markdown 语法高亮
+        self.highlighter = MarkdownHighlighter(self.editor.document())
 
     def initConnections(self):
         self.open_btn.clicked.connect(lambda: open_markdown_file(self, self.editor, self))
